@@ -1,3 +1,4 @@
+:summaryTableId: quarkus-langchain4j-azure-openai_quarkus-langchain4j
 [.configuration-legend]
 icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
@@ -8,10 +9,6 @@ h|Type
 h|Default
 
 a|icon:lock[title=Fixed at build time] [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-enabled]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-enabled[`quarkus.langchain4j.azure-openai.chat-model.enabled`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.enabled+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -29,10 +26,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-enabled]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-enabled[`quarkus.langchain4j.azure-openai.embedding-model.enabled`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.enabled+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -50,10 +43,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-moderation-model-enabled]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-moderation-model-enabled[`quarkus.langchain4j.azure-openai.moderation-model.enabled`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.moderation-model.enabled+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -71,10 +60,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-enabled]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-enabled[`quarkus.langchain4j.azure-openai.image-model.enabled`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.enabled+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -92,10 +77,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-resource-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-resource-name[`quarkus.langchain4j.azure-openai.resource-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.resource-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -115,10 +96,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-domain-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-domain-name[`quarkus.langchain4j.azure-openai.domain-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.domain-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -138,10 +115,6 @@ endif::add-copy-button-to-env-var[]
 |`openai.azure.com`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-deployment-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-deployment-name[`quarkus.langchain4j.azure-openai.deployment-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.deployment-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -161,10 +134,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-endpoint]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-endpoint[`quarkus.langchain4j.azure-openai.endpoint`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.endpoint+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -184,10 +153,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-ad-token]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-ad-token[`quarkus.langchain4j.azure-openai.ad-token`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.ad-token+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -205,10 +170,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-api-version]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-api-version[`quarkus.langchain4j.azure-openai.api-version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.api-version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -226,10 +187,6 @@ endif::add-copy-button-to-env-var[]
 |`2023-05-15`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-api-key]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-api-key[`quarkus.langchain4j.azure-openai.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -247,10 +204,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-timeout]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-timeout[`quarkus.langchain4j.azure-openai.timeout`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.timeout+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -264,14 +217,10 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_LANGCHAIN4J_AZURE_OPENAI_TIMEOUT+++`
 endif::add-copy-button-to-env-var[]
 --
-|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-langchain4j-azure-openai_quarkus-langchain4j[icon:question-circle[title=More information about the Duration format]]
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
 |`10s`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-max-retries]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-max-retries[`quarkus.langchain4j.azure-openai.max-retries`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.max-retries+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -289,10 +238,6 @@ endif::add-copy-button-to-env-var[]
 |`1`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-log-requests]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-log-requests[`quarkus.langchain4j.azure-openai.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -310,10 +255,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-log-responses]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-log-responses[`quarkus.langchain4j.azure-openai.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -331,10 +272,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-enable-integration]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-enable-integration[`quarkus.langchain4j.azure-openai.enable-integration`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.enable-integration+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -352,10 +289,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-resource-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-resource-name[`quarkus.langchain4j.azure-openai.chat-model.resource-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.resource-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -373,10 +306,6 @@ endif::add-copy-button-to-env-var[]
 |`<dummy>`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-domain-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-domain-name[`quarkus.langchain4j.azure-openai.chat-model.domain-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.domain-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -394,10 +323,6 @@ endif::add-copy-button-to-env-var[]
 |`<dummy>`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-deployment-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-deployment-name[`quarkus.langchain4j.azure-openai.chat-model.deployment-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.deployment-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -415,10 +340,6 @@ endif::add-copy-button-to-env-var[]
 |`<dummy>`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-endpoint]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-endpoint[`quarkus.langchain4j.azure-openai.chat-model.endpoint`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.endpoint+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -436,10 +357,6 @@ endif::add-copy-button-to-env-var[]
 |`<dummy>`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-ad-token]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-ad-token[`quarkus.langchain4j.azure-openai.chat-model.ad-token`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.ad-token+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -457,10 +374,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-api-version]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-api-version[`quarkus.langchain4j.azure-openai.chat-model.api-version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.api-version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -478,10 +391,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-api-key]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-api-key[`quarkus.langchain4j.azure-openai.chat-model.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -499,10 +408,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-temperature]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-temperature[`quarkus.langchain4j.azure-openai.chat-model.temperature`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.temperature+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -520,10 +425,6 @@ endif::add-copy-button-to-env-var[]
 |`${quarkus.langchain4j.temperature:1.0}`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-top-p]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-top-p[`quarkus.langchain4j.azure-openai.chat-model.top-p`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.top-p+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -541,10 +442,6 @@ endif::add-copy-button-to-env-var[]
 |`1.0`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-max-tokens]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-max-tokens[`quarkus.langchain4j.azure-openai.chat-model.max-tokens`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.max-tokens+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -562,10 +459,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-presence-penalty]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-presence-penalty[`quarkus.langchain4j.azure-openai.chat-model.presence-penalty`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.presence-penalty+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -583,10 +476,6 @@ endif::add-copy-button-to-env-var[]
 |`0`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-frequency-penalty]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-frequency-penalty[`quarkus.langchain4j.azure-openai.chat-model.frequency-penalty`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.frequency-penalty+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -604,10 +493,6 @@ endif::add-copy-button-to-env-var[]
 |`0`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-log-requests[`quarkus.langchain4j.azure-openai.chat-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -625,10 +510,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-log-responses[`quarkus.langchain4j.azure-openai.chat-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -646,10 +527,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-response-format]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-chat-model-response-format[`quarkus.langchain4j.azure-openai.chat-model.response-format`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.chat-model.response-format+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -667,10 +544,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-resource-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-resource-name[`quarkus.langchain4j.azure-openai.embedding-model.resource-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.resource-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -688,10 +561,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-domain-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-domain-name[`quarkus.langchain4j.azure-openai.embedding-model.domain-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.domain-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -709,10 +578,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-deployment-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-deployment-name[`quarkus.langchain4j.azure-openai.embedding-model.deployment-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.deployment-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -730,10 +595,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-endpoint]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-endpoint[`quarkus.langchain4j.azure-openai.embedding-model.endpoint`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.endpoint+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -751,10 +612,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-ad-token]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-ad-token[`quarkus.langchain4j.azure-openai.embedding-model.ad-token`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.ad-token+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -772,10 +629,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-api-version]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-api-version[`quarkus.langchain4j.azure-openai.embedding-model.api-version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.api-version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -793,10 +646,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-api-key]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-api-key[`quarkus.langchain4j.azure-openai.embedding-model.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -814,10 +663,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-log-requests[`quarkus.langchain4j.azure-openai.embedding-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -835,10 +680,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-embedding-model-log-responses[`quarkus.langchain4j.azure-openai.embedding-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.embedding-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -856,10 +697,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-resource-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-resource-name[`quarkus.langchain4j.azure-openai.image-model.resource-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.resource-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -877,10 +714,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-domain-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-domain-name[`quarkus.langchain4j.azure-openai.image-model.domain-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.domain-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -898,10 +731,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-deployment-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-deployment-name[`quarkus.langchain4j.azure-openai.image-model.deployment-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.deployment-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -919,10 +748,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-endpoint]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-endpoint[`quarkus.langchain4j.azure-openai.image-model.endpoint`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.endpoint+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -940,10 +765,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-ad-token]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-ad-token[`quarkus.langchain4j.azure-openai.image-model.ad-token`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.ad-token+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -961,10 +782,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-api-version]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-api-version[`quarkus.langchain4j.azure-openai.image-model.api-version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.api-version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -982,10 +799,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-api-key]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-api-key[`quarkus.langchain4j.azure-openai.image-model.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1003,10 +816,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-model-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-model-name[`quarkus.langchain4j.azure-openai.image-model.model-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.model-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1024,10 +833,6 @@ endif::add-copy-button-to-env-var[]
 |`dall-e-3`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-persist]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-persist[`quarkus.langchain4j.azure-openai.image-model.persist`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.persist+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1045,10 +850,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-persist-directory]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-persist-directory[`quarkus.langchain4j.azure-openai.image-model.persist-directory`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.persist-directory+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1066,10 +867,6 @@ endif::add-copy-button-to-env-var[]
 |`${java.io.tmpdir}/dall-e-images`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-response-format]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-response-format[`quarkus.langchain4j.azure-openai.image-model.response-format`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.response-format+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1089,10 +886,6 @@ endif::add-copy-button-to-env-var[]
 |`url`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-size]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-size[`quarkus.langchain4j.azure-openai.image-model.size`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.size+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1114,10 +907,6 @@ endif::add-copy-button-to-env-var[]
 |`1024x1024`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-quality]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-quality[`quarkus.langchain4j.azure-openai.image-model.quality`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.quality+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1139,10 +928,6 @@ endif::add-copy-button-to-env-var[]
 |`standard`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-number]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-number[`quarkus.langchain4j.azure-openai.image-model.number`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.number+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1164,10 +949,6 @@ endif::add-copy-button-to-env-var[]
 |`1`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-style]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-style[`quarkus.langchain4j.azure-openai.image-model.style`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.style+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1189,10 +970,6 @@ endif::add-copy-button-to-env-var[]
 |`vivid`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-user]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-user[`quarkus.langchain4j.azure-openai.image-model.user`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.user+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1210,10 +987,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-log-requests[`quarkus.langchain4j.azure-openai.image-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1231,10 +1004,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-image-model-log-responses[`quarkus.langchain4j.azure-openai.image-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai.image-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1256,10 +1025,6 @@ h|Type
 h|Default
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-resource-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-resource-name[`quarkus.langchain4j.azure-openai."model-name".resource-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".resource-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1279,10 +1044,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-domain-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-domain-name[`quarkus.langchain4j.azure-openai."model-name".domain-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".domain-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1302,10 +1063,6 @@ endif::add-copy-button-to-env-var[]
 |`openai.azure.com`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-deployment-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-deployment-name[`quarkus.langchain4j.azure-openai."model-name".deployment-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".deployment-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1325,10 +1082,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-endpoint]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-endpoint[`quarkus.langchain4j.azure-openai."model-name".endpoint`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".endpoint+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1348,10 +1101,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-ad-token]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-ad-token[`quarkus.langchain4j.azure-openai."model-name".ad-token`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".ad-token+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1369,10 +1118,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-api-version]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-api-version[`quarkus.langchain4j.azure-openai."model-name".api-version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".api-version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1390,10 +1135,6 @@ endif::add-copy-button-to-env-var[]
 |`2023-05-15`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-api-key]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-api-key[`quarkus.langchain4j.azure-openai."model-name".api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1411,10 +1152,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-timeout]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-timeout[`quarkus.langchain4j.azure-openai."model-name".timeout`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".timeout+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1428,14 +1165,10 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_LANGCHAIN4J_AZURE_OPENAI__MODEL_NAME__TIMEOUT+++`
 endif::add-copy-button-to-env-var[]
 --
-|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-langchain4j-azure-openai_quarkus-langchain4j[icon:question-circle[title=More information about the Duration format]]
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
 |`10s`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-max-retries]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-max-retries[`quarkus.langchain4j.azure-openai."model-name".max-retries`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".max-retries+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1453,10 +1186,6 @@ endif::add-copy-button-to-env-var[]
 |`1`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-log-requests]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-log-requests[`quarkus.langchain4j.azure-openai."model-name".log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1474,10 +1203,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-log-responses]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-log-responses[`quarkus.langchain4j.azure-openai."model-name".log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1495,10 +1220,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-enable-integration]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-enable-integration[`quarkus.langchain4j.azure-openai."model-name".enable-integration`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".enable-integration+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1516,10 +1237,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-resource-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-resource-name[`quarkus.langchain4j.azure-openai."model-name".chat-model.resource-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.resource-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1537,10 +1254,6 @@ endif::add-copy-button-to-env-var[]
 |`<dummy>`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-domain-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-domain-name[`quarkus.langchain4j.azure-openai."model-name".chat-model.domain-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.domain-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1558,10 +1271,6 @@ endif::add-copy-button-to-env-var[]
 |`<dummy>`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-deployment-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-deployment-name[`quarkus.langchain4j.azure-openai."model-name".chat-model.deployment-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.deployment-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1579,10 +1288,6 @@ endif::add-copy-button-to-env-var[]
 |`<dummy>`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-endpoint]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-endpoint[`quarkus.langchain4j.azure-openai."model-name".chat-model.endpoint`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.endpoint+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1600,10 +1305,6 @@ endif::add-copy-button-to-env-var[]
 |`<dummy>`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-ad-token]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-ad-token[`quarkus.langchain4j.azure-openai."model-name".chat-model.ad-token`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.ad-token+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1621,10 +1322,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-api-version]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-api-version[`quarkus.langchain4j.azure-openai."model-name".chat-model.api-version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.api-version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1642,10 +1339,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-api-key]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-api-key[`quarkus.langchain4j.azure-openai."model-name".chat-model.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1663,10 +1356,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-temperature]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-temperature[`quarkus.langchain4j.azure-openai."model-name".chat-model.temperature`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.temperature+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1684,10 +1373,6 @@ endif::add-copy-button-to-env-var[]
 |`${quarkus.langchain4j.temperature:1.0}`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-top-p]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-top-p[`quarkus.langchain4j.azure-openai."model-name".chat-model.top-p`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.top-p+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1705,10 +1390,6 @@ endif::add-copy-button-to-env-var[]
 |`1.0`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-max-tokens]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-max-tokens[`quarkus.langchain4j.azure-openai."model-name".chat-model.max-tokens`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.max-tokens+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1726,10 +1407,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-presence-penalty]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-presence-penalty[`quarkus.langchain4j.azure-openai."model-name".chat-model.presence-penalty`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.presence-penalty+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1747,10 +1424,6 @@ endif::add-copy-button-to-env-var[]
 |`0`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-frequency-penalty]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-frequency-penalty[`quarkus.langchain4j.azure-openai."model-name".chat-model.frequency-penalty`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.frequency-penalty+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1768,10 +1441,6 @@ endif::add-copy-button-to-env-var[]
 |`0`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-log-requests[`quarkus.langchain4j.azure-openai."model-name".chat-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1789,10 +1458,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-log-responses[`quarkus.langchain4j.azure-openai."model-name".chat-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1810,10 +1475,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-response-format]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-chat-model-response-format[`quarkus.langchain4j.azure-openai."model-name".chat-model.response-format`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".chat-model.response-format+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1831,10 +1492,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-resource-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-resource-name[`quarkus.langchain4j.azure-openai."model-name".embedding-model.resource-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.resource-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1852,10 +1509,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-domain-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-domain-name[`quarkus.langchain4j.azure-openai."model-name".embedding-model.domain-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.domain-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1873,10 +1526,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-deployment-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-deployment-name[`quarkus.langchain4j.azure-openai."model-name".embedding-model.deployment-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.deployment-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1894,10 +1543,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-endpoint]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-endpoint[`quarkus.langchain4j.azure-openai."model-name".embedding-model.endpoint`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.endpoint+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1915,10 +1560,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-ad-token]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-ad-token[`quarkus.langchain4j.azure-openai."model-name".embedding-model.ad-token`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.ad-token+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1936,10 +1577,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-api-version]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-api-version[`quarkus.langchain4j.azure-openai."model-name".embedding-model.api-version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.api-version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1957,10 +1594,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-api-key]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-api-key[`quarkus.langchain4j.azure-openai."model-name".embedding-model.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1978,10 +1611,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-log-requests[`quarkus.langchain4j.azure-openai."model-name".embedding-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -1999,10 +1628,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-embedding-model-log-responses[`quarkus.langchain4j.azure-openai."model-name".embedding-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".embedding-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2020,10 +1645,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-resource-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-resource-name[`quarkus.langchain4j.azure-openai."model-name".image-model.resource-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.resource-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2041,10 +1662,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-domain-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-domain-name[`quarkus.langchain4j.azure-openai."model-name".image-model.domain-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.domain-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2062,10 +1679,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-deployment-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-deployment-name[`quarkus.langchain4j.azure-openai."model-name".image-model.deployment-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.deployment-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2083,10 +1696,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-endpoint]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-endpoint[`quarkus.langchain4j.azure-openai."model-name".image-model.endpoint`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.endpoint+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2104,10 +1713,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-ad-token]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-ad-token[`quarkus.langchain4j.azure-openai."model-name".image-model.ad-token`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.ad-token+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2125,10 +1730,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-api-version]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-api-version[`quarkus.langchain4j.azure-openai."model-name".image-model.api-version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.api-version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2146,10 +1747,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-api-key]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-api-key[`quarkus.langchain4j.azure-openai."model-name".image-model.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2167,10 +1764,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-model-name]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-model-name[`quarkus.langchain4j.azure-openai."model-name".image-model.model-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.model-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2188,10 +1781,6 @@ endif::add-copy-button-to-env-var[]
 |`dall-e-3`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-persist]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-persist[`quarkus.langchain4j.azure-openai."model-name".image-model.persist`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.persist+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2209,10 +1798,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-persist-directory]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-persist-directory[`quarkus.langchain4j.azure-openai."model-name".image-model.persist-directory`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.persist-directory+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2230,10 +1815,6 @@ endif::add-copy-button-to-env-var[]
 |`${java.io.tmpdir}/dall-e-images`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-response-format]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-response-format[`quarkus.langchain4j.azure-openai."model-name".image-model.response-format`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.response-format+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2253,10 +1834,6 @@ endif::add-copy-button-to-env-var[]
 |`url`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-size]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-size[`quarkus.langchain4j.azure-openai."model-name".image-model.size`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.size+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2278,10 +1855,6 @@ endif::add-copy-button-to-env-var[]
 |`1024x1024`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-quality]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-quality[`quarkus.langchain4j.azure-openai."model-name".image-model.quality`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.quality+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2303,10 +1876,6 @@ endif::add-copy-button-to-env-var[]
 |`standard`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-number]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-number[`quarkus.langchain4j.azure-openai."model-name".image-model.number`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.number+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2328,10 +1897,6 @@ endif::add-copy-button-to-env-var[]
 |`1`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-style]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-style[`quarkus.langchain4j.azure-openai."model-name".image-model.style`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.style+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2353,10 +1918,6 @@ endif::add-copy-button-to-env-var[]
 |`vivid`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-user]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-user[`quarkus.langchain4j.azure-openai."model-name".image-model.user`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.user+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2374,10 +1935,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-log-requests[`quarkus.langchain4j.azure-openai."model-name".image-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2395,10 +1952,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-azure-openai_quarkus-langchain4j-azure-openai-model-name-image-model-log-responses[`quarkus.langchain4j.azure-openai."model-name".image-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.azure-openai."model-name".image-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -2437,3 +1990,5 @@ In other cases, the simplified format is translated to the `java.time.Duration` 
 * If the value is a number followed by `d`, it is prefixed with `P`.
 ====
 endif::no-duration-note[]
+
+:!summaryTableId:

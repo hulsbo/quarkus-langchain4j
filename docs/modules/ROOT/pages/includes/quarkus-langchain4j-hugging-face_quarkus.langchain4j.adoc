@@ -1,3 +1,4 @@
+:summaryTableId: quarkus-langchain4j-hugging-face_quarkus-langchain4j
 [.configuration-legend]
 icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
@@ -8,10 +9,6 @@ h|Type
 h|Default
 
 a|icon:lock[title=Fixed at build time] [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-enabled]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-enabled[`quarkus.langchain4j.huggingface.chat-model.enabled`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.enabled+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -29,10 +26,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-embedding-model-enabled]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-embedding-model-enabled[`quarkus.langchain4j.huggingface.embedding-model.enabled`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.embedding-model.enabled+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -50,10 +43,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-moderation-model-enabled]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-moderation-model-enabled[`quarkus.langchain4j.huggingface.moderation-model.enabled`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.moderation-model.enabled+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -71,10 +60,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-api-key]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-api-key[`quarkus.langchain4j.huggingface.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -92,10 +77,6 @@ endif::add-copy-button-to-env-var[]
 |`dummy`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-timeout]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-timeout[`quarkus.langchain4j.huggingface.timeout`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.timeout+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -109,14 +90,10 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_LANGCHAIN4J_HUGGINGFACE_TIMEOUT+++`
 endif::add-copy-button-to-env-var[]
 --
-|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-langchain4j-hugging-face_quarkus-langchain4j[icon:question-circle[title=More information about the Duration format]]
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
 |`10s`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-inference-endpoint-url]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-inference-endpoint-url[`quarkus.langchain4j.huggingface.chat-model.inference-endpoint-url`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.inference-endpoint-url+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -138,10 +115,6 @@ endif::add-copy-button-to-env-var[]
 |`https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-temperature]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-temperature[`quarkus.langchain4j.huggingface.chat-model.temperature`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.temperature+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -159,10 +132,6 @@ endif::add-copy-button-to-env-var[]
 |`${quarkus.langchain4j.temperature:1.0}`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-max-new-tokens]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-max-new-tokens[`quarkus.langchain4j.huggingface.chat-model.max-new-tokens`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.max-new-tokens+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -180,10 +149,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-return-full-text]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-return-full-text[`quarkus.langchain4j.huggingface.chat-model.return-full-text`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.return-full-text+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -201,10 +166,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-wait-for-model]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-wait-for-model[`quarkus.langchain4j.huggingface.chat-model.wait-for-model`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.wait-for-model+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -222,10 +183,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-do-sample]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-do-sample[`quarkus.langchain4j.huggingface.chat-model.do-sample`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.do-sample+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -243,10 +200,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-top-k]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-top-k[`quarkus.langchain4j.huggingface.chat-model.top-k`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.top-k+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -264,10 +217,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-top-p]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-top-p[`quarkus.langchain4j.huggingface.chat-model.top-p`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.top-p+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -285,10 +234,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-repetition-penalty]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-repetition-penalty[`quarkus.langchain4j.huggingface.chat-model.repetition-penalty`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.repetition-penalty+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -306,10 +251,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-log-requests[`quarkus.langchain4j.huggingface.chat-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -327,10 +268,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-chat-model-log-responses[`quarkus.langchain4j.huggingface.chat-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.chat-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -348,10 +285,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-embedding-model-inference-endpoint-url]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-embedding-model-inference-endpoint-url[`quarkus.langchain4j.huggingface.embedding-model.inference-endpoint-url`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.embedding-model.inference-endpoint-url+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -373,10 +306,6 @@ endif::add-copy-button-to-env-var[]
 |`https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-embedding-model-wait-for-model]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-embedding-model-wait-for-model[`quarkus.langchain4j.huggingface.embedding-model.wait-for-model`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.embedding-model.wait-for-model+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -394,10 +323,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-log-requests]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-log-requests[`quarkus.langchain4j.huggingface.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -415,10 +340,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-log-responses]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-log-responses[`quarkus.langchain4j.huggingface.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -436,10 +357,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-enable-integration]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-enable-integration[`quarkus.langchain4j.huggingface.enable-integration`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface.enable-integration+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -461,10 +378,6 @@ h|Type
 h|Default
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-api-key]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-api-key[`quarkus.langchain4j.huggingface."model-name".api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -482,10 +395,6 @@ endif::add-copy-button-to-env-var[]
 |`dummy`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-timeout]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-timeout[`quarkus.langchain4j.huggingface."model-name".timeout`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".timeout+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -499,14 +408,10 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_LANGCHAIN4J_HUGGINGFACE__MODEL_NAME__TIMEOUT+++`
 endif::add-copy-button-to-env-var[]
 --
-|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-langchain4j-hugging-face_quarkus-langchain4j[icon:question-circle[title=More information about the Duration format]]
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
 |`10s`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-inference-endpoint-url]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-inference-endpoint-url[`quarkus.langchain4j.huggingface."model-name".chat-model.inference-endpoint-url`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.inference-endpoint-url+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -528,10 +433,6 @@ endif::add-copy-button-to-env-var[]
 |`https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-temperature]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-temperature[`quarkus.langchain4j.huggingface."model-name".chat-model.temperature`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.temperature+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -549,10 +450,6 @@ endif::add-copy-button-to-env-var[]
 |`${quarkus.langchain4j.temperature:1.0}`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-max-new-tokens]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-max-new-tokens[`quarkus.langchain4j.huggingface."model-name".chat-model.max-new-tokens`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.max-new-tokens+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -570,10 +467,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-return-full-text]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-return-full-text[`quarkus.langchain4j.huggingface."model-name".chat-model.return-full-text`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.return-full-text+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -591,10 +484,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-wait-for-model]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-wait-for-model[`quarkus.langchain4j.huggingface."model-name".chat-model.wait-for-model`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.wait-for-model+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -612,10 +501,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-do-sample]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-do-sample[`quarkus.langchain4j.huggingface."model-name".chat-model.do-sample`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.do-sample+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -633,10 +518,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-top-k]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-top-k[`quarkus.langchain4j.huggingface."model-name".chat-model.top-k`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.top-k+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -654,10 +535,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-top-p]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-top-p[`quarkus.langchain4j.huggingface."model-name".chat-model.top-p`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.top-p+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -675,10 +552,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-repetition-penalty]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-repetition-penalty[`quarkus.langchain4j.huggingface."model-name".chat-model.repetition-penalty`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.repetition-penalty+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -696,10 +569,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-log-requests[`quarkus.langchain4j.huggingface."model-name".chat-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -717,10 +586,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-chat-model-log-responses[`quarkus.langchain4j.huggingface."model-name".chat-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".chat-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -738,10 +603,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-embedding-model-inference-endpoint-url]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-embedding-model-inference-endpoint-url[`quarkus.langchain4j.huggingface."model-name".embedding-model.inference-endpoint-url`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".embedding-model.inference-endpoint-url+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -763,10 +624,6 @@ endif::add-copy-button-to-env-var[]
 |`https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-embedding-model-wait-for-model]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-embedding-model-wait-for-model[`quarkus.langchain4j.huggingface."model-name".embedding-model.wait-for-model`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".embedding-model.wait-for-model+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -784,10 +641,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-log-requests]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-log-requests[`quarkus.langchain4j.huggingface."model-name".log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -805,10 +658,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-log-responses]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-log-responses[`quarkus.langchain4j.huggingface."model-name".log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -826,10 +675,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-enable-integration]] [.property-path]##link:#quarkus-langchain4j-hugging-face_quarkus-langchain4j-huggingface-model-name-enable-integration[`quarkus.langchain4j.huggingface."model-name".enable-integration`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.huggingface."model-name".enable-integration+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -868,3 +713,5 @@ In other cases, the simplified format is translated to the `java.time.Duration` 
 * If the value is a number followed by `d`, it is prefixed with `P`.
 ====
 endif::no-duration-note[]
+
+:!summaryTableId:

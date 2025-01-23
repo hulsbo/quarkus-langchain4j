@@ -62,15 +62,6 @@
                         </goals>
                         <configuration>
                             <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}</deployment>
-                            <devMode>
-                                <jvmOptions>
-                                    <add-modules>jdk.incubator.vector</add-modules>
-                                    <enable-preview/>
-                                    <enable-native-access>ALL-UNNAMED</enable-native-access>
-                                </jvmOptions>
-                                <lockXxJvmOptions>TieredStopAtLevel</lockXxJvmOptions>
-                                <lockJvmOptions>agentlib:jdwp</lockJvmOptions>
-                            </devMode>
                         </configuration>
                     </execution>
                 </executions>
@@ -82,6 +73,7 @@
                         <path>
                             <groupId>io.quarkus</groupId>
                             <artifactId>quarkus-extension-processor</artifactId>
+                            <version>${quarkus.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -108,5 +100,5 @@
             </plugin>
         </plugins>
     </build>
-
+    
 </project>

@@ -1,3 +1,4 @@
+:summaryTableId: quarkus-langchain4j-anthropic_quarkus-langchain4j
 [.configuration-legend]
 icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
@@ -8,10 +9,6 @@ h|Type
 h|Default
 
 a|icon:lock[title=Fixed at build time] [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-enabled]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-enabled[`quarkus.langchain4j.anthropic.chat-model.enabled`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.enabled+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -29,10 +26,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-base-url]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-base-url[`quarkus.langchain4j.anthropic.base-url`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.base-url+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -50,10 +43,6 @@ endif::add-copy-button-to-env-var[]
 |`https://api.anthropic.com/v1/`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-api-key]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-api-key[`quarkus.langchain4j.anthropic.api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -71,10 +60,6 @@ endif::add-copy-button-to-env-var[]
 |`dummy`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-version]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-version[`quarkus.langchain4j.anthropic.version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -92,10 +77,6 @@ endif::add-copy-button-to-env-var[]
 |`2023-06-01`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-timeout]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-timeout[`quarkus.langchain4j.anthropic.timeout`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.timeout+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -109,14 +90,10 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_LANGCHAIN4J_ANTHROPIC_TIMEOUT+++`
 endif::add-copy-button-to-env-var[]
 --
-|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-langchain4j-anthropic_quarkus-langchain4j[icon:question-circle[title=More information about the Duration format]]
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
 |`10s`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-log-requests]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-log-requests[`quarkus.langchain4j.anthropic.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -134,10 +111,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-log-responses]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-log-responses[`quarkus.langchain4j.anthropic.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -155,10 +128,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-enable-integration]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-enable-integration[`quarkus.langchain4j.anthropic.enable-integration`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.enable-integration+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -176,10 +145,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-model-name]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-model-name[`quarkus.langchain4j.anthropic.chat-model.model-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.model-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -197,10 +162,6 @@ endif::add-copy-button-to-env-var[]
 |`claude-3-haiku-20240307`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-temperature]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-temperature[`quarkus.langchain4j.anthropic.chat-model.temperature`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.temperature+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -220,10 +181,6 @@ endif::add-copy-button-to-env-var[]
 |`0.7`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-max-tokens]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-max-tokens[`quarkus.langchain4j.anthropic.chat-model.max-tokens`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.max-tokens+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -243,10 +200,6 @@ endif::add-copy-button-to-env-var[]
 |`1024`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-top-p]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-top-p[`quarkus.langchain4j.anthropic.chat-model.top-p`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.top-p+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -266,10 +219,6 @@ endif::add-copy-button-to-env-var[]
 |`1.0`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-top-k]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-top-k[`quarkus.langchain4j.anthropic.chat-model.top-k`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.top-k+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -287,10 +236,6 @@ endif::add-copy-button-to-env-var[]
 |`40`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-max-retries]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-max-retries[`quarkus.langchain4j.anthropic.chat-model.max-retries`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.max-retries+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -308,10 +253,6 @@ endif::add-copy-button-to-env-var[]
 |`1`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-stop-sequences]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-stop-sequences[`quarkus.langchain4j.anthropic.chat-model.stop-sequences`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.stop-sequences+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -329,10 +270,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-log-requests[`quarkus.langchain4j.anthropic.chat-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -350,10 +287,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-chat-model-log-responses[`quarkus.langchain4j.anthropic.chat-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic.chat-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -375,10 +308,6 @@ h|Type
 h|Default
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-base-url]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-base-url[`quarkus.langchain4j.anthropic."model-name".base-url`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".base-url+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -396,10 +325,6 @@ endif::add-copy-button-to-env-var[]
 |`https://api.anthropic.com/v1/`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-api-key]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-api-key[`quarkus.langchain4j.anthropic."model-name".api-key`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".api-key+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -417,10 +342,6 @@ endif::add-copy-button-to-env-var[]
 |`dummy`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-version]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-version[`quarkus.langchain4j.anthropic."model-name".version`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".version+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -438,10 +359,6 @@ endif::add-copy-button-to-env-var[]
 |`2023-06-01`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-timeout]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-timeout[`quarkus.langchain4j.anthropic."model-name".timeout`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".timeout+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -455,14 +372,10 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_LANGCHAIN4J_ANTHROPIC__MODEL_NAME__TIMEOUT+++`
 endif::add-copy-button-to-env-var[]
 --
-|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-langchain4j-anthropic_quarkus-langchain4j[icon:question-circle[title=More information about the Duration format]]
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
 |`10s`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-log-requests]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-log-requests[`quarkus.langchain4j.anthropic."model-name".log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -480,10 +393,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-log-responses]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-log-responses[`quarkus.langchain4j.anthropic."model-name".log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -501,10 +410,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-enable-integration]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-enable-integration[`quarkus.langchain4j.anthropic."model-name".enable-integration`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".enable-integration+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -522,10 +427,6 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-model-name]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-model-name[`quarkus.langchain4j.anthropic."model-name".chat-model.model-name`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.model-name+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -543,10 +444,6 @@ endif::add-copy-button-to-env-var[]
 |`claude-3-haiku-20240307`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-temperature]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-temperature[`quarkus.langchain4j.anthropic."model-name".chat-model.temperature`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.temperature+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -566,10 +463,6 @@ endif::add-copy-button-to-env-var[]
 |`0.7`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-max-tokens]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-max-tokens[`quarkus.langchain4j.anthropic."model-name".chat-model.max-tokens`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.max-tokens+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -589,10 +482,6 @@ endif::add-copy-button-to-env-var[]
 |`1024`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-top-p]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-top-p[`quarkus.langchain4j.anthropic."model-name".chat-model.top-p`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.top-p+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -612,10 +501,6 @@ endif::add-copy-button-to-env-var[]
 |`1.0`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-top-k]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-top-k[`quarkus.langchain4j.anthropic."model-name".chat-model.top-k`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.top-k+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -633,10 +518,6 @@ endif::add-copy-button-to-env-var[]
 |`40`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-max-retries]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-max-retries[`quarkus.langchain4j.anthropic."model-name".chat-model.max-retries`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.max-retries+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -654,10 +535,6 @@ endif::add-copy-button-to-env-var[]
 |`1`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-stop-sequences]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-stop-sequences[`quarkus.langchain4j.anthropic."model-name".chat-model.stop-sequences`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.stop-sequences+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -675,10 +552,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-log-requests]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-log-requests[`quarkus.langchain4j.anthropic."model-name".chat-model.log-requests`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.log-requests+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -696,10 +569,6 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a| [[quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-log-responses]] [.property-path]##link:#quarkus-langchain4j-anthropic_quarkus-langchain4j-anthropic-model-name-chat-model-log-responses[`quarkus.langchain4j.anthropic."model-name".chat-model.log-responses`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.langchain4j.anthropic."model-name".chat-model.log-responses+++[]
-endif::add-copy-button-to-config-props[]
-
 
 [.description]
 --
@@ -738,3 +607,5 @@ In other cases, the simplified format is translated to the `java.time.Duration` 
 * If the value is a number followed by `d`, it is prefixed with `P`.
 ====
 endif::no-duration-note[]
+
+:!summaryTableId:

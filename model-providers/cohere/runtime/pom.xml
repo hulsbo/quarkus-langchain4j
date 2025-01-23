@@ -59,6 +59,7 @@
                         <path>
                             <groupId>io.quarkus</groupId>
                             <artifactId>quarkus-extension-processor</artifactId>
+                            <version>${quarkus.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -86,3 +87,4 @@
         </plugins>
     </build>
 </project>
+

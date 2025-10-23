@@ -6,6 +6,7 @@ import dev.langchain4j.data.image.Image;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.pdf.PdfFile;
+import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
@@ -38,6 +39,7 @@ import io.quarkiverse.langchain4j.ModelName;
 import io.quarkiverse.langchain4j.PdfUrl;
 import io.quarkiverse.langchain4j.RegisterAiService;
 import io.quarkiverse.langchain4j.SeedMemory;
+import io.quarkiverse.langchain4j.runtime.aiservice.ChatEvent;
 import io.quarkiverse.langchain4j.runtime.aiservice.QuarkusAiServiceContextQualifier;
 
 public class LangChain4jDotNames {
@@ -49,18 +51,6 @@ public class LangChain4jDotNames {
     public static final DotName IMAGE_MODEL = DotName.createSimple(ImageModel.class);
     public static final DotName CHAT_MESSAGE = DotName.createSimple(ChatMessage.class);
     public static final DotName TOKEN_STREAM = DotName.createSimple(TokenStream.class);
-    /**
-     * @deprecated Will go away once the Quarkus-specific guardrail implementation has been fully removed
-     */
-    @Deprecated(forRemoval = true)
-    public static final DotName QUARKUS_OUTPUT_GUARDRAILS = DotName
-            .createSimple(io.quarkiverse.langchain4j.guardrails.OutputGuardrails.class);
-    /**
-     * @deprecated Will go away once the Quarkus-specific guardrail implementation has been fully removed
-     */
-    @Deprecated(forRemoval = true)
-    public static final DotName QUARKUS_INPUT_GUARDRAILS = DotName
-            .createSimple(io.quarkiverse.langchain4j.guardrails.InputGuardrails.class);
     public static final DotName OUTPUT_GUARDRAILS = DotName.createSimple(OutputGuardrails.class);
     public static final DotName INPUT_GUARDRAILS = DotName.createSimple(InputGuardrails.class);
     static final DotName AI_SERVICES = DotName.createSimple(AiServices.class);
@@ -96,11 +86,11 @@ public class LangChain4jDotNames {
     static final DotName NO_CHAT_MEMORY_PROVIDER_SUPPLIER = DotName.createSimple(
             RegisterAiService.NoChatMemoryProviderSupplier.class);
 
-    static final DotName RETRIEVER = DotName.createSimple(ContentRetriever.class);
+    public static final DotName RETRIEVER = DotName.createSimple(ContentRetriever.class);
     static final DotName NO_RETRIEVER = DotName.createSimple(
             RegisterAiService.NoRetriever.class);
 
-    static final DotName RETRIEVAL_AUGMENTOR = DotName.createSimple(RetrievalAugmentor.class);
+    public static final DotName RETRIEVAL_AUGMENTOR = DotName.createSimple(RetrievalAugmentor.class);
     static final DotName BEAN_IF_EXISTS_RETRIEVAL_AUGMENTOR_SUPPLIER = DotName.createSimple(
             RegisterAiService.BeanIfExistsRetrievalAugmentorSupplier.class);
 
@@ -130,5 +120,9 @@ public class LangChain4jDotNames {
     static final DotName AUDIO = DotName.createSimple(dev.langchain4j.data.audio.Audio.class);
     static final DotName PDF_FILE = DotName.createSimple(PdfFile.class);
     static final DotName RESULT = DotName.createSimple(Result.class);
-    static final DotName TOOL_PROVIDER = DotName.createSimple(ToolProvider.class);
+    public static final DotName TOOL_PROVIDER = DotName.createSimple(ToolProvider.class);
+    // Using the class name to keep the McpToolBox annotation in the mcp module
+    public static final DotName MCP_TOOLBOX = DotName.createSimple("io.quarkiverse.langchain4j.mcp.runtime.McpToolBox");
+    public static final DotName CHAT_EVENT = DotName.createSimple(ChatEvent.class);
+    public static final DotName CHAT_MEMORY = DotName.createSimple(ChatMemory.class);
 }

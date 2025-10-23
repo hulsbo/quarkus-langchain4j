@@ -11,8 +11,11 @@ import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import dev.langchain4j.agent.tool.ReturnBehavior;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.internal.Json;
+import dev.langchain4j.invocation.InvocationContext;
+import dev.langchain4j.service.tool.ToolExecutionResult;
 import dev.langchain4j.service.tool.ToolExecutor;
 import io.quarkiverse.langchain4j.QuarkusJsonCodecFactory;
 import io.quarkiverse.langchain4j.runtime.prompt.Mappable;
@@ -26,21 +29,32 @@ public class QuarkusToolExecutor implements ToolExecutor {
     private final Context context;
 
     public record Context(Object tool, String toolInvokerName, String methodName, String argumentMapperClassName,
-            ToolMethodCreateInfo.ExecutionModel executionModel) {
+            ToolMethodCreateInfo.ExecutionModel executionModel, ReturnBehavior returnBehavior) {
     }
 
     public interface Wrapper {
 
-        String wrap(ToolExecutionRequest toolExecutionRequest, Object memoryId,
-                BiFunction<ToolExecutionRequest, Object, String> fun);
+        ToolExecutionResult wrap(ToolExecutionRequest toolExecutionRequest, InvocationContext invocationContext,
+                BiFunction<ToolExecutionRequest, InvocationContext, ToolExecutionResult> fun);
     }
 
     public QuarkusToolExecutor(Context context) {
         this.context = context;
     }
 
+    public ReturnBehavior returnBehavior() {
+        return context.returnBehavior;
+    }
+
+    @Override
     public String execute(ToolExecutionRequest toolExecutionRequest, Object memoryId) {
-        log.debugv("About to execute {0}", toolExecutionRequest);
+        return executeWithContext(toolExecutionRequest, InvocationContext.builder().chatMemoryId(memoryId).build())
+                .resultText();
+    }
+
+    @Override
+    public ToolExecutionResult executeWithContext(ToolExecutionRequest request, InvocationContext invocationContext) {
+        log.debugv("About to execute {0}", request);
 
         // TODO Tools invocation are "imperative"
         // TODO This method is called from the caller thread
@@ -49,7 +63,7 @@ public class QuarkusToolExecutor implements ToolExecutor {
         // TODO We may have to check who's going to call this method from a non-blocking thread to handle the dispatch there.
 
         ToolInvoker invokerInstance = createInvokerInstance();
-        Object[] params = prepareArguments(toolExecutionRequest, invokerInstance.methodMetadata(), memoryId);
+        Object[] params = prepareArguments(request, invokerInstance.methodMetadata(), invocationContext);
         // When required to block, we are invoked on a worker thread (stream with blocking tools).
         switch (context.executionModel) {
             case BLOCKING:
@@ -68,17 +82,23 @@ public class QuarkusToolExecutor implements ToolExecutor {
                             .get();
                 } catch (Exception e) {
                     if (e instanceof CompletionException) {
-                        return e.getCause().getMessage();
+                        if (e.getCause() instanceof RuntimeException) {
+                            throw (RuntimeException) e.getCause();
+                        } else {
+                            throw new RuntimeException(e);
+                        }
+                    } else if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    } else {
+                        throw new RuntimeException(e);
                     }
-                    return e.getMessage();
                 }
             default:
                 throw new IllegalStateException("Unknown execution model: " + context.executionModel);
         }
-
     }
 
-    private String invoke(Object[] params, ToolInvoker invokerInstance) {
+    private ToolExecutionResult invoke(Object[] params, ToolInvoker invokerInstance) {
         try {
             if (log.isDebugEnabled()) {
                 log.debugv("Attempting to invoke tool {0} with parameters {1}", context.tool, Arrays.toString(params));
@@ -95,7 +115,7 @@ public class QuarkusToolExecutor implements ToolExecutor {
                 result = handleResult(invokerInstance, invocationResult);
             }
             log.debugv("Tool execution result: {0}", result);
-            return result;
+            return ToolExecutionResult.builder().result(invocationResult).resultText(result).build();
         } catch (Exception e) {
             if (e instanceof IllegalArgumentException) {
                 throw (IllegalArgumentException) e;
@@ -104,7 +124,7 @@ public class QuarkusToolExecutor implements ToolExecutor {
                 throw (IllegalStateException) e;
             }
             log.error("Error while executing tool '" + context.tool.getClass() + "'", e);
-            return e.getMessage();
+            return ToolExecutionResult.builder().isError(true).resultText(e.getMessage()).build();
         }
     }
 
@@ -132,7 +152,7 @@ public class QuarkusToolExecutor implements ToolExecutor {
     }
 
     private Object[] prepareArguments(ToolExecutionRequest toolExecutionRequest,
-            ToolInvoker.MethodMetadata methodMetadata, Object memoryId) {
+            ToolInvoker.MethodMetadata methodMetadata, InvocationContext invocationContext) {
         String argumentsJsonStr = toolExecutionRequest.arguments();
         Map<String, Object> argumentsFromRequest;
         try {
@@ -149,6 +169,7 @@ public class QuarkusToolExecutor implements ToolExecutor {
         }
 
         Object[] finalArgs = new Object[argumentsFromRequest.size()];
+
         for (var entry : argumentsFromRequest.entrySet()) {
             Integer pos = methodMetadata.getNameToParamPosition().get(entry.getKey());
             if (pos == null) {
@@ -157,8 +178,13 @@ public class QuarkusToolExecutor implements ToolExecutor {
                 finalArgs[pos] = entry.getValue();
             }
         }
+        Object memoryId = invocationContext.chatMemoryId();
         if (memoryId != null && methodMetadata.getMemoryIdParamPosition() != null) {
             finalArgs[methodMetadata.getMemoryIdParamPosition()] = memoryId;
+        }
+        Object invocationParams = invocationContext.invocationParameters();
+        if (invocationParams != null && methodMetadata.getInvocationParamsParamPosition() != null) {
+            finalArgs[methodMetadata.getInvocationParamsParamPosition()] = invocationParams;
         }
         return finalArgs;
     }

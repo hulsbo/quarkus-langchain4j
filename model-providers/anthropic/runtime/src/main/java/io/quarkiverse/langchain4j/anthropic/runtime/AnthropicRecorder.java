@@ -3,7 +3,13 @@ package io.quarkiverse.langchain4j.anthropic.runtime;
 import static io.quarkiverse.langchain4j.runtime.OptionalUtil.firstOrDefault;
 
 import java.time.Duration;
-import java.util.function.Supplier;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.util.TypeLiteral;
+
+import org.jboss.logging.Logger;
 
 import dev.langchain4j.model.anthropic.AnthropicChatModel;
 import dev.langchain4j.model.anthropic.AnthropicStreamingChatModel;
@@ -11,14 +17,22 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.DisabledChatModel;
 import dev.langchain4j.model.chat.DisabledStreamingChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.chat.listener.ChatModelListener;
+import io.quarkiverse.langchain4j.anthropic.runtime.config.ChatModelConfig;
 import io.quarkiverse.langchain4j.anthropic.runtime.config.LangChain4jAnthropicConfig;
 import io.quarkiverse.langchain4j.runtime.NamedConfigUtil;
+import io.quarkus.arc.SyntheticCreationalContext;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
 import io.smallrye.config.ConfigValidationException;
 
 @Recorder
 public class AnthropicRecorder {
+    private static final Logger LOG = Logger.getLogger(AnthropicRecorder.class);
+
+    private static final TypeLiteral<Instance<ChatModelListener>> CHAT_MODEL_LISTENER_TYPE_LITERAL = new TypeLiteral<>() {
+    };
+
     private static final String DUMMY_KEY = "dummy";
 
     private final RuntimeValue<LangChain4jAnthropicConfig> runtimeConfig;
@@ -27,7 +41,7 @@ public class AnthropicRecorder {
         this.runtimeConfig = runtimeConfig;
     }
 
-    public Supplier<ChatModel> chatModel(String configName) {
+    public Function<SyntheticCreationalContext<ChatModel>, ChatModel> chatModel(String configName) {
         var anthropicConfig = correspondingAnthropicConfig(runtimeConfig.getValue(), configName);
 
         if (anthropicConfig.enableIntegration()) {
@@ -46,13 +60,14 @@ public class AnthropicRecorder {
                     .logRequests(firstOrDefault(false, chatModelConfig.logRequests(), anthropicConfig.logRequests()))
                     .logResponses(firstOrDefault(false, chatModelConfig.logResponses(), anthropicConfig.logResponses()))
                     .timeout(anthropicConfig.timeout().orElse(Duration.ofSeconds(10)))
-                    .topK(chatModelConfig.topK())
                     .maxTokens(chatModelConfig.maxTokens())
                     .maxRetries(chatModelConfig.maxRetries());
 
             if (chatModelConfig.temperature().isPresent()) {
                 builder.temperature(chatModelConfig.temperature().getAsDouble());
             }
+
+            builder.topK(chatModelConfig.topK().orElse(40));
 
             if (chatModelConfig.topP().isPresent()) {
                 builder.topP(chatModelConfig.topP().getAsDouble());
@@ -62,23 +77,47 @@ public class AnthropicRecorder {
                 builder.stopSequences(chatModelConfig.stopSequences().get());
             }
 
-            return new Supplier<>() {
+            ChatModelConfig.ThinkingConfig thinkingConfig = chatModelConfig.thinking();
+            if (thinkingConfig.type().isPresent()) {
+                if (chatModelConfig.topK().isPresent()) {
+                    LOG.warn("TopK was not configured because thinking was enabled");
+                }
+                builder.topK(null);
+                builder.thinkingType(thinkingConfig.type().get());
+            }
+
+            if (thinkingConfig.budgetTokens().isPresent()) {
+                builder.thinkingBudgetTokens(thinkingConfig.budgetTokens().get());
+            }
+
+            if (thinkingConfig.returnThinking().isPresent()) {
+                builder.returnThinking(thinkingConfig.returnThinking().get());
+            }
+
+            if (thinkingConfig.sendThinking().isPresent()) {
+                builder.sendThinking(thinkingConfig.sendThinking().get());
+            }
+
+            return new Function<>() {
                 @Override
-                public ChatModel get() {
+                public ChatModel apply(SyntheticCreationalContext<ChatModel> context) {
+                    builder.listeners(context.getInjectedReference(CHAT_MODEL_LISTENER_TYPE_LITERAL).stream()
+                            .collect(Collectors.toList()));
                     return builder.build();
                 }
             };
         } else {
-            return new Supplier<>() {
+            return new Function<>() {
                 @Override
-                public ChatModel get() {
+                public ChatModel apply(SyntheticCreationalContext<ChatModel> context) {
                     return new DisabledChatModel();
                 }
             };
         }
     }
 
-    public Supplier<StreamingChatModel> streamingChatModel(String configName) {
+    public Function<SyntheticCreationalContext<StreamingChatModel>, StreamingChatModel> streamingChatModel(
+            String configName) {
         var anthropicConfig = correspondingAnthropicConfig(runtimeConfig.getValue(), configName);
 
         if (anthropicConfig.enableIntegration()) {
@@ -97,7 +136,7 @@ public class AnthropicRecorder {
                     .logRequests(firstOrDefault(false, chatModelConfig.logRequests(), anthropicConfig.logRequests()))
                     .logResponses(firstOrDefault(false, chatModelConfig.logResponses(), anthropicConfig.logResponses()))
                     .timeout(anthropicConfig.timeout().orElse(Duration.ofSeconds(10)))
-                    .topK(chatModelConfig.topK())
+                    .topK(chatModelConfig.topK().orElse(40))
                     .maxTokens(chatModelConfig.maxTokens());
 
             if (chatModelConfig.temperature().isPresent()) {
@@ -112,16 +151,39 @@ public class AnthropicRecorder {
                 builder.stopSequences(chatModelConfig.stopSequences().get());
             }
 
-            return new Supplier<>() {
+            ChatModelConfig.ThinkingConfig thinkingConfig = chatModelConfig.thinking();
+            if (thinkingConfig.type().isPresent()) {
+                if (chatModelConfig.topK().isPresent()) {
+                    LOG.warn("TopK was not configured because thinking was enabled");
+                }
+                builder.topK(null);
+                builder.thinkingType(thinkingConfig.type().get());
+            }
+
+            if (thinkingConfig.budgetTokens().isPresent()) {
+                builder.thinkingBudgetTokens(thinkingConfig.budgetTokens().get());
+            }
+
+            if (thinkingConfig.returnThinking().isPresent()) {
+                builder.returnThinking(thinkingConfig.returnThinking().get());
+            }
+
+            if (thinkingConfig.sendThinking().isPresent()) {
+                builder.sendThinking(thinkingConfig.sendThinking().get());
+            }
+
+            return new Function<>() {
                 @Override
-                public StreamingChatModel get() {
+                public StreamingChatModel apply(SyntheticCreationalContext<StreamingChatModel> context) {
+                    builder.listeners(context.getInjectedReference(CHAT_MODEL_LISTENER_TYPE_LITERAL).stream()
+                            .collect(Collectors.toList()));
                     return builder.build();
                 }
             };
         } else {
-            return new Supplier<>() {
+            return new Function<>() {
                 @Override
-                public StreamingChatModel get() {
+                public StreamingChatModel apply(SyntheticCreationalContext<StreamingChatModel> context) {
                     return new DisabledStreamingChatModel();
                 }
             };

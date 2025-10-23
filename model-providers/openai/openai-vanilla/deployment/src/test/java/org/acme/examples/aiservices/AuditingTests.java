@@ -4,12 +4,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static dev.langchain4j.test.guardrail.GuardrailAssertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.atIndex;
+import static dev.langchain4j.test.guardrail.GuardrailAssertions.assertThatExceptionOfType;
+import static dev.langchain4j.test.guardrail.GuardrailAssertions.atIndex;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -18,10 +19,14 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
@@ -30,31 +35,33 @@ import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.guardrail.GuardrailException;
 import dev.langchain4j.guardrail.InputGuardrail;
+import dev.langchain4j.guardrail.InputGuardrailException;
 import dev.langchain4j.guardrail.InputGuardrailResult;
 import dev.langchain4j.guardrail.OutputGuardrail;
+import dev.langchain4j.guardrail.OutputGuardrailException;
 import dev.langchain4j.guardrail.OutputGuardrailResult;
+import dev.langchain4j.invocation.InvocationContext;
+import dev.langchain4j.observability.api.event.AiServiceCompletedEvent;
+import dev.langchain4j.observability.api.event.AiServiceErrorEvent;
+import dev.langchain4j.observability.api.event.AiServiceEvent;
+import dev.langchain4j.observability.api.event.AiServiceResponseReceivedEvent;
+import dev.langchain4j.observability.api.event.AiServiceStartedEvent;
+import dev.langchain4j.observability.api.event.GuardrailExecutedEvent;
+import dev.langchain4j.observability.api.event.InputGuardrailExecutedEvent;
+import dev.langchain4j.observability.api.event.OutputGuardrailExecutedEvent;
+import dev.langchain4j.observability.api.event.ToolExecutedEvent;
+import dev.langchain4j.observability.event.DefaultAiServiceCompletedEvent;
+import dev.langchain4j.observability.event.DefaultAiServiceErrorEvent;
+import dev.langchain4j.observability.event.DefaultAiServiceResponseReceivedEvent;
+import dev.langchain4j.observability.event.DefaultAiServiceStartedEvent;
+import dev.langchain4j.observability.event.DefaultInputGuardrailExecutedEvent;
+import dev.langchain4j.observability.event.DefaultOutputGuardrailExecutedEvent;
+import dev.langchain4j.observability.event.DefaultToolExecutedEvent;
 import dev.langchain4j.service.guardrail.InputGuardrails;
 import dev.langchain4j.service.guardrail.OutputGuardrails;
-import dev.langchain4j.test.guardrail.GuardrailAssertions;
 import io.quarkiverse.langchain4j.RegisterAiService;
-import io.quarkiverse.langchain4j.audit.AuditSourceInfo;
-import io.quarkiverse.langchain4j.audit.InitialMessagesCreatedEvent;
-import io.quarkiverse.langchain4j.audit.LLMInteractionCompleteEvent;
-import io.quarkiverse.langchain4j.audit.LLMInteractionEvent;
-import io.quarkiverse.langchain4j.audit.LLMInteractionFailureEvent;
-import io.quarkiverse.langchain4j.audit.ResponseFromLLMReceivedEvent;
-import io.quarkiverse.langchain4j.audit.ToolExecutedEvent;
-import io.quarkiverse.langchain4j.audit.guardrails.InputGuardrailExecutedEvent;
-import io.quarkiverse.langchain4j.audit.guardrails.OutputGuardrailExecutedEvent;
-import io.quarkiverse.langchain4j.audit.guardrails.internal.DefaultInputGuardrailExecutedEvent;
-import io.quarkiverse.langchain4j.audit.guardrails.internal.DefaultOutputGuardrailExecutedEvent;
-import io.quarkiverse.langchain4j.audit.internal.DefaultInitialMessagesCreatedEvent;
-import io.quarkiverse.langchain4j.audit.internal.DefaultLLMInteractionCompleteEvent;
-import io.quarkiverse.langchain4j.audit.internal.DefaultLLMInteractionFailureEvent;
-import io.quarkiverse.langchain4j.audit.internal.DefaultResponseFromLLMReceivedEvent;
-import io.quarkiverse.langchain4j.audit.internal.DefaultToolExecutedEvent;
+import io.quarkiverse.langchain4j.observability.AiServiceSelector;
 import io.quarkiverse.langchain4j.openai.testing.internal.OpenAiBaseTest;
 import io.quarkiverse.langchain4j.testing.internal.WiremockAware;
 import io.quarkus.logging.Log;
@@ -74,135 +81,242 @@ class AuditingTests extends OpenAiBaseTest {
     private static final String EXPECTED_RESPONSE = "The square root of 485,906,798,473,894,056 in scientific notation is approximately 6.97070153193991E8.";
 
     @Inject
-    Assistant assistant;
+    Assistant1 assistant1;
 
     @Inject
-    Auditor auditor;
+    Assistant2 assistant2;
 
     @Inject
-    InputGuardrailAuditor inputGuardrailAuditor;
+    AllServicesAuditor allServicesAuditor;
 
     @Inject
-    OutputGuardrailAuditor outputGuardrailAuditor;
+    AllServicesInputGuardrailAuditor allServicesInputGuardrailAuditor;
+
+    @Inject
+    AllServicesOutputGuardrailAuditor allServicesOutputGuardrailAuditor;
+
+    @Inject
+    Assistant1ServicesAuditor assistant1ServicesAuditor;
+
+    @Inject
+    Assistant1InputGuardrailAuditor assistant1InputGuardrailAuditor;
+
+    @Inject
+    Assistant1OutputGuardrailAuditor assistant1OutputGuardrailAuditor;
+
+    @Inject
+    Assistant2ServicesAuditor assistant2ServicesAuditor;
+
+    @Inject
+    Assistant2InputGuardrailAuditor assistant2InputGuardrailAuditor;
+
+    @Inject
+    Assistant2OutputGuardrailAuditor assistant2OutputGuardrailAuditor;
+
+    @Inject
+    CalculatorAfter calculatorAfter;
+
+    @BeforeEach
+    void beforeEach() {
+        resetSetup();
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = { Assistant1.class, Assistant2.class })
+    void should_audit_input_guardrail_events(Class<? extends Assistant> assistantClass) {
+        shouldAuditInputGuardrailEvents(getAssistant(assistantClass), allServicesInputGuardrailAuditor);
+    }
 
     @Test
-    void should_audit_quarkus_input_guardrail_events() {
-        setupWiremock();
-
-        assertThatExceptionOfType(io.quarkiverse.langchain4j.runtime.aiservice.GuardrailException.class)
-                .isThrownBy(() -> assistant.chatWithQuarkusInputGuardrails(USER_MESSAGE))
+    void should_not_audit_unselected_input_guardrail_events() {
+        // invoking assistant1 should get events on both the all services auditor and the assistant1 specific auditor
+        assertThatExceptionOfType(InputGuardrailException.class)
+                .isThrownBy(() -> assistant1.chatWithInputGuardrails(USER_MESSAGE))
                 .withMessage("The guardrail %s failed with this message: User message is not valid",
-                        FailureQuarkusInputGuardrail.class.getName());
+                        FailureInputGuardrail.class.getName());
 
-        io.quarkiverse.langchain4j.guardrails.GuardrailAssertions
-                .assertThat(inputGuardrailAuditor.quarkusInputGuardrailExecutedEvents)
-                .hasSize(2)
-                .satisfies(inputGuardrailExecutedEvent -> {
-                    io.quarkiverse.langchain4j.guardrails.GuardrailAssertions.assertThat(inputGuardrailExecutedEvent)
-                            .extracting(
-                                    e -> e.sourceInfo().methodName(),
-                                    e -> e.params().userMessage().singleText(),
-                                    e -> e.rewrittenUserMessage().singleText(),
-                                    io.quarkiverse.langchain4j.audit.InputGuardrailExecutedEvent::guardrailClass)
-                            .containsExactly(
-                                    "chatWithQuarkusInputGuardrails",
-                                    USER_MESSAGE,
-                                    "Success!!",
-                                    SuccessQuarkusInputGuardrail.class);
+        verifyAuditInputGuardrailEvents(allServicesInputGuardrailAuditor);
+        verifyAuditInputGuardrailEvents(assistant1InputGuardrailAuditor);
+        noEventsReceived(assistant2InputGuardrailAuditor);
 
-                    io.quarkiverse.langchain4j.guardrails.GuardrailAssertions.assertThat(inputGuardrailExecutedEvent.result())
-                            .isSuccessful();
-                }, atIndex(0))
-                .satisfies(inputGuardrailExecutedEvent -> {
-                    io.quarkiverse.langchain4j.guardrails.GuardrailAssertions.assertThat(inputGuardrailExecutedEvent)
-                            .extracting(
-                                    e -> e.sourceInfo().methodName(),
-                                    e -> e.params().userMessage().singleText(),
-                                    e -> e.rewrittenUserMessage().singleText(),
-                                    io.quarkiverse.langchain4j.audit.InputGuardrailExecutedEvent::guardrailClass)
-                            .containsExactly(
-                                    "chatWithQuarkusInputGuardrails",
-                                    "Success!!",
-                                    "Success!!",
-                                    FailureQuarkusInputGuardrail.class);
+        resetSetup();
 
-                    io.quarkiverse.langchain4j.guardrails.GuardrailAssertions.assertThat(inputGuardrailExecutedEvent.result())
-                            .hasSingleFailureWithMessage("User message is not valid");
-                }, atIndex(1));
+        // invoking assistant2 should get events on both the all services auditor and the assistant2 specific auditor
+        assertThatExceptionOfType(InputGuardrailException.class)
+                .isThrownBy(() -> assistant2.chatWithInputGuardrails(USER_MESSAGE))
+                .withMessage("The guardrail %s failed with this message: User message is not valid",
+                        FailureInputGuardrail.class.getName());
+
+        verifyAuditInputGuardrailEvents(allServicesInputGuardrailAuditor);
+        verifyAuditInputGuardrailEvents(assistant2InputGuardrailAuditor);
+        noEventsReceived(assistant1InputGuardrailAuditor);
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = { Assistant1.class, Assistant2.class })
+    void should_audit_output_guardrail_events(Class<? extends Assistant> assistantClass) {
+        shouldAuditOutputGuardrailEvents(getAssistant(assistantClass), allServicesOutputGuardrailAuditor);
     }
 
     @Test
-    void should_audit_quarkus_output_guardrail_events() {
-        setupWiremock();
-
-        assertThatExceptionOfType(io.quarkiverse.langchain4j.runtime.aiservice.GuardrailException.class)
-                .isThrownBy(() -> assistant.chatWithQuarkusOutputGuardrails(USER_MESSAGE))
+    void should_not_audit_unselected_output_guardrail_events() {
+        // invoking assistant1 should get events on both the all services auditor and the assistant1 specific auditor
+        assertThatExceptionOfType(OutputGuardrailException.class)
+                .isThrownBy(() -> assistant1.chatWithOutputGuardrails(USER_MESSAGE))
                 .withMessage("The guardrail %s failed with this message: LLM response is not valid",
-                        FailureQuarkusOutputGuardrail.class.getName());
+                        FailureOutputGuardrail.class.getName());
 
-        io.quarkiverse.langchain4j.guardrails.GuardrailAssertions
-                .assertThat(outputGuardrailAuditor.quarkusOutputGuardrailExecutedEvents)
-                .hasSize(2)
-                .satisfies(outputGuardrailExecutedEvent -> {
-                    io.quarkiverse.langchain4j.guardrails.GuardrailAssertions.assertThat(outputGuardrailExecutedEvent)
-                            .extracting(
-                                    e -> e.sourceInfo().methodName(),
-                                    e -> e.params().responseFromLLM().text(),
-                                    io.quarkiverse.langchain4j.audit.OutputGuardrailExecutedEvent::guardrailClass)
-                            .containsExactly(
-                                    "chatWithQuarkusOutputGuardrails",
-                                    EXPECTED_RESPONSE,
-                                    SuccessQuarkusOutputGuardrail.class);
+        verifyAuditOutputGuardrailEvents(allServicesOutputGuardrailAuditor);
+        verifyAuditOutputGuardrailEvents(assistant1OutputGuardrailAuditor);
+        noEventsReceived(assistant2OutputGuardrailAuditor);
 
-                    io.quarkiverse.langchain4j.guardrails.GuardrailAssertions.assertThat(outputGuardrailExecutedEvent.result())
-                            .hasSuccess("Success!!", "Success!!");
-                }, atIndex(0))
-                .satisfies(outputGuardrailExecutedEvent -> {
-                    io.quarkiverse.langchain4j.guardrails.GuardrailAssertions.assertThat(outputGuardrailExecutedEvent)
-                            .extracting(
-                                    e -> e.sourceInfo().methodName(),
-                                    e -> e.params().responseFromLLM().text(),
-                                    io.quarkiverse.langchain4j.audit.OutputGuardrailExecutedEvent::guardrailClass)
-                            .containsExactly(
-                                    "chatWithQuarkusOutputGuardrails",
-                                    "Success!!",
-                                    FailureQuarkusOutputGuardrail.class);
+        resetSetup();
 
-                    io.quarkiverse.langchain4j.guardrails.GuardrailAssertions.assertThat(outputGuardrailExecutedEvent.result())
-                            .hasSingleFailureWithMessage("LLM response is not valid");
-                }, atIndex(1));
+        // invoking assistant2 should get events on both the all services auditor and the assistant2 specific auditor
+        assertThatExceptionOfType(OutputGuardrailException.class)
+                .isThrownBy(() -> assistant2.chatWithOutputGuardrails(USER_MESSAGE))
+                .withMessage("The guardrail %s failed with this message: LLM response is not valid",
+                        FailureOutputGuardrail.class.getName());
+
+        verifyAuditOutputGuardrailEvents(allServicesOutputGuardrailAuditor);
+        verifyAuditOutputGuardrailEvents(assistant2OutputGuardrailAuditor);
+        noEventsReceived(assistant1OutputGuardrailAuditor);
     }
 
-    @Test
-    void should_audit_input_guardrail_events() {
-        setupWiremock();
+    @ParameterizedTest
+    @ValueSource(classes = { Assistant1.class, Assistant2.class })
+    void should_execute_tool_then_answer(Class<? extends Assistant> assistantClass) throws IOException {
+        shouldExecuteToolThenAnswer(assistantClass, getAssistant(assistantClass));
+    }
 
-        assertThatExceptionOfType(GuardrailException.class)
+    private void noEventsReceived(BaseAuditor auditor) {
+        assertThat(wiremock().getServeEvents().size()).isGreaterThanOrEqualTo(2);
+        assertThat(auditor.invocationContexts)
+                .isNotNull()
+                .isEmpty();
+
+        assertThat(auditor.failed).isZero();
+        assertThat(auditor.aiServiceStartedCounter).hasValue(0);
+        assertThat(auditor.aiServiceCompletedCounter).hasValue(0);
+        assertThat(auditor.aiServiceErrorCounter).hasValue(0);
+        assertThat(auditor.aiResponseReceivedCounter).hasValue(0);
+        assertThat(auditor.toolExecutedCounter).hasValue(0);
+    }
+
+    private static <E extends GuardrailExecutedEvent> void noEventsReceived(BaseGuardrailAuditor<E> auditor) {
+        assertThat(auditor.events)
+                .isNotNull()
+                .isEmpty();
+    }
+
+    private static void shouldAuditInputGuardrailEvents(Assistant assistant,
+            BaseGuardrailAuditor<InputGuardrailExecutedEvent> auditor) {
+
+        assertThatExceptionOfType(InputGuardrailException.class)
                 .isThrownBy(() -> assistant.chatWithInputGuardrails(USER_MESSAGE))
                 .withMessage("The guardrail %s failed with this message: User message is not valid",
                         FailureInputGuardrail.class.getName());
 
-        assertThat(inputGuardrailAuditor.inputGuardrailExecutedEvents).isEmpty();
+        verifyAuditInputGuardrailEvents(auditor);
     }
 
-    @Test
-    void should_audit_output_guardrail_events() {
-        setupWiremock();
+    private static void verifyAuditInputGuardrailEvents(BaseGuardrailAuditor<InputGuardrailExecutedEvent> auditor) {
+        assertThat(auditor.events)
+                .hasSize(2)
+                .satisfies(inputGuardrailExecutedEvent -> {
+                    assertThat(inputGuardrailExecutedEvent)
+                            .extracting(
+                                    e -> e.invocationContext().methodName(),
+                                    e -> e.request().userMessage().singleText(),
+                                    e -> e.rewrittenUserMessage().singleText(),
+                                    InputGuardrailExecutedEvent::guardrailClass)
+                            .containsExactly(
+                                    "chatWithInputGuardrails",
+                                    USER_MESSAGE,
+                                    "Success!!",
+                                    SuccessInputGuardrail.class);
 
-        assertThatExceptionOfType(GuardrailException.class)
+                    assertThat(inputGuardrailExecutedEvent.result())
+                            .isSuccessful();
+                }, atIndex(0))
+                .satisfies(inputGuardrailExecutedEvent -> {
+                    assertThat(inputGuardrailExecutedEvent)
+                            .extracting(
+                                    e -> e.invocationContext().methodName(),
+                                    e -> e.request().userMessage().singleText(),
+                                    e -> e.rewrittenUserMessage().singleText(),
+                                    InputGuardrailExecutedEvent::guardrailClass)
+                            .containsExactly(
+                                    "chatWithInputGuardrails",
+                                    "Success!!",
+                                    "Success!!",
+                                    FailureInputGuardrail.class);
+
+                    assertThat(inputGuardrailExecutedEvent.result())
+                            .hasSingleFailureWithMessage("User message is not valid");
+                }, atIndex(1));
+    }
+
+    private static void shouldAuditOutputGuardrailEvents(Assistant assistant,
+            BaseGuardrailAuditor<OutputGuardrailExecutedEvent> auditor) {
+        assertThatExceptionOfType(OutputGuardrailException.class)
                 .isThrownBy(() -> assistant.chatWithOutputGuardrails(USER_MESSAGE))
                 .withMessage("The guardrail %s failed with this message: LLM response is not valid",
                         FailureOutputGuardrail.class.getName());
 
-        assertThat(outputGuardrailAuditor.outputGuardrailExecutedEvents).isEmpty();
+        verifyAuditOutputGuardrailEvents(auditor);
     }
 
-    @Test
-    void should_execute_tool_then_answer() throws IOException {
-        setupWiremock();
+    private static void verifyAuditOutputGuardrailEvents(BaseGuardrailAuditor<OutputGuardrailExecutedEvent> auditor) {
+        assertThat(auditor.events)
+                .hasSize(2)
+                .satisfies(outputGuardrailExecutedEvent -> {
+                    assertThat(outputGuardrailExecutedEvent)
+                            .extracting(
+                                    e -> e.invocationContext().methodName(),
+                                    e -> e.request().responseFromLLM().aiMessage().text(),
+                                    OutputGuardrailExecutedEvent::guardrailClass)
+                            .containsExactly(
+                                    "chatWithOutputGuardrails",
+                                    EXPECTED_RESPONSE,
+                                    SuccessOutputGuardrail.class);
+
+                    assertThat(outputGuardrailExecutedEvent.result())
+                            .hasSuccessfulText("Success!!");
+                }, atIndex(0))
+                .satisfies(outputGuardrailExecutedEvent -> {
+                    assertThat(outputGuardrailExecutedEvent)
+                            .extracting(
+                                    e -> e.invocationContext().methodName(),
+                                    e -> e.request().responseFromLLM().aiMessage().text(),
+                                    OutputGuardrailExecutedEvent::guardrailClass)
+                            .containsExactly(
+                                    "chatWithOutputGuardrails",
+                                    "Success!!",
+                                    FailureOutputGuardrail.class);
+
+                    assertThat(outputGuardrailExecutedEvent.result())
+                            .hasSingleFailureWithMessage("LLM response is not valid");
+                }, atIndex(1));
+    }
+
+    private void shouldExecuteToolThenAnswer(Class<? extends Assistant> assistantClass, Assistant assistant)
+            throws IOException {
 
         var answer = assistant.chat(USER_MESSAGE);
+        verifyToolExecutedEvents(assistantClass, answer, allServicesAuditor);
 
+        if (assistantClass.getName().equals(Assistant1.class.getName())) {
+            verifyToolExecutedEvents(Assistant1.class, answer, assistant1ServicesAuditor);
+            noEventsReceived(assistant2ServicesAuditor);
+        } else {
+            verifyToolExecutedEvents(Assistant2.class, answer, assistant2ServicesAuditor);
+            noEventsReceived(assistant1ServicesAuditor);
+        }
+    }
+
+    private void verifyToolExecutedEvents(Class<? extends Assistant> assistantClass, String answer, BaseAuditor auditor)
+            throws IOException {
         assertThat(answer).isEqualTo(EXPECTED_RESPONSE);
 
         var numServeEvents = wiremock().getServeEvents().size();
@@ -217,29 +331,52 @@ class AuditingTests extends OpenAiBaseTest {
                         new MessageContent("assistant", null),
                         new MessageContent("function", "6.97070153193991E8")));
 
-        assertThat(auditor.auditSourceInfos).hasSize(5);
-        assertThat(auditor.auditSourceInfos.stream().collect(Collectors.toSet()))
+        assertThat(auditor.invocationContexts).hasSize(5);
+        assertThat(auditor.invocationContexts.stream().collect(Collectors.toSet()))
                 .singleElement()
                 .extracting(
-                        AuditSourceInfo::interfaceName,
-                        AuditSourceInfo::methodName,
-                        AuditSourceInfo::methodParams)
+                        InvocationContext::interfaceName,
+                        InvocationContext::methodName,
+                        InvocationContext::methodArguments)
                 .containsExactly(
-                        Assistant.class.getName(),
+                        assistantClass.getName(),
                         "chat",
-                        new Object[] { USER_MESSAGE });
+                        List.of(USER_MESSAGE));
 
         assertThat(auditor.originalUserMessage).isEqualTo(USER_MESSAGE);
         assertThat(auditor.systemMessage).isEqualTo("You are a chat bot that answers questions");
         assertThat(auditor.aiMessageToolExecution).isEqualTo("squareRoot");
         assertThat(auditor.toolResult).isEqualTo("6.97070153193991E8");
-        assertThat(auditor.result).isEqualTo(EXPECTED_RESPONSE);
+        assertThat(auditor.result).isEqualTo(Optional.of(EXPECTED_RESPONSE));
         assertThat(auditor.failed).isZero();
-        assertThat(auditor.initialMessagesCreatedCounter.get()).isGreaterThanOrEqualTo(1);
-        assertThat(auditor.llmInteractionCompleteCounter.get()).isGreaterThanOrEqualTo(1);
-        assertThat(auditor.llmInteractionFailedCounter.get()).isZero();
-        assertThat(auditor.responseFromLLMReceivedCounter.get()).isGreaterThanOrEqualTo(1);
+        assertThat(auditor.aiServiceStartedCounter.get()).isGreaterThanOrEqualTo(1);
+        assertThat(auditor.aiServiceCompletedCounter.get()).isGreaterThanOrEqualTo(1);
+        assertThat(auditor.aiServiceErrorCounter.get()).isZero();
+        assertThat(auditor.aiResponseReceivedCounter.get()).isGreaterThanOrEqualTo(1);
         assertThat(auditor.toolExecutedCounter.get()).isGreaterThanOrEqualTo(1);
+    }
+
+    private void resetSetup() {
+        setupWiremock();
+        this.allServicesAuditor.init();
+        this.allServicesInputGuardrailAuditor.init();
+        this.allServicesOutputGuardrailAuditor.init();
+        this.assistant1ServicesAuditor.init();
+        this.assistant1InputGuardrailAuditor.init();
+        this.assistant1OutputGuardrailAuditor.init();
+        this.assistant2ServicesAuditor.init();
+        this.assistant2InputGuardrailAuditor.init();
+        this.assistant2OutputGuardrailAuditor.init();
+    }
+
+    private <A extends Assistant> A getAssistant(Class<A> assistantClass) {
+        if (Assistant1.class.getName().equals(assistantClass.getName())) {
+            return (A) assistant1;
+        } else if (Assistant2.class.getName().equals(assistantClass.getName())) {
+            return (A) assistant2;
+        } else {
+            throw new IllegalArgumentException("Unknown assistant class: " + assistantClass);
+        }
     }
 
     private void setupWiremock() {
@@ -310,38 +447,6 @@ class AuditingTests extends OpenAiBaseTest {
     }
 
     @Singleton
-    static class SuccessQuarkusInputGuardrail implements io.quarkiverse.langchain4j.guardrails.InputGuardrail {
-        @Override
-        public io.quarkiverse.langchain4j.guardrails.InputGuardrailResult validate(UserMessage userMessage) {
-            return successWith("Success!!");
-        }
-    }
-
-    @Singleton
-    static class FailureQuarkusInputGuardrail implements io.quarkiverse.langchain4j.guardrails.InputGuardrail {
-        @Override
-        public io.quarkiverse.langchain4j.guardrails.InputGuardrailResult validate(UserMessage userMessage) {
-            return failure("User message is not valid");
-        }
-    }
-
-    @Singleton
-    static class SuccessQuarkusOutputGuardrail implements io.quarkiverse.langchain4j.guardrails.OutputGuardrail {
-        @Override
-        public io.quarkiverse.langchain4j.guardrails.OutputGuardrailResult validate(AiMessage responseFromLLM) {
-            return successWith("Success!!");
-        }
-    }
-
-    @Singleton
-    static class FailureQuarkusOutputGuardrail implements io.quarkiverse.langchain4j.guardrails.OutputGuardrail {
-        @Override
-        public io.quarkiverse.langchain4j.guardrails.OutputGuardrailResult validate(AiMessage responseFromLLM) {
-            return failure("LLM response is not valid");
-        }
-    }
-
-    @Singleton
     static class SuccessInputGuardrail implements InputGuardrail {
         @Override
         public InputGuardrailResult validate(UserMessage userMessage) {
@@ -375,38 +480,37 @@ class AuditingTests extends OpenAiBaseTest {
 
     @Singleton
     static class CalculatorAfter implements Runnable {
-        private final Integer wiremockPort;
+        private final WireMock wireMock;
 
         public CalculatorAfter(@ConfigProperty(name = "quarkus.wiremock.devservices.port") Integer wiremockPort) {
-            this.wiremockPort = wiremockPort;
+            this.wireMock = new WireMock(wiremockPort);
         }
 
         @Override
         public void run() {
-            WireMock wireMock = new WireMock(wiremockPort);
-            wireMock.setSingleScenarioState(SCENARIO, SECOND_SCENARIO);
+            this.wireMock.setSingleScenarioState(SCENARIO, SECOND_SCENARIO);
         }
     }
 
-    @RegisterAiService(tools = Calculator.class)
-    @Singleton
     @dev.langchain4j.service.SystemMessage("You are a chat bot that answers questions")
     interface Assistant {
         String chat(String message);
-
-        @io.quarkiverse.langchain4j.guardrails.InputGuardrails({ SuccessQuarkusInputGuardrail.class,
-                FailureQuarkusInputGuardrail.class })
-        String chatWithQuarkusInputGuardrails(String message);
-
-        @io.quarkiverse.langchain4j.guardrails.OutputGuardrails({ SuccessQuarkusOutputGuardrail.class,
-                FailureQuarkusOutputGuardrail.class })
-        String chatWithQuarkusOutputGuardrails(String message);
 
         @InputGuardrails({ SuccessInputGuardrail.class, FailureInputGuardrail.class })
         String chatWithInputGuardrails(String message);
 
         @OutputGuardrails({ SuccessOutputGuardrail.class, FailureOutputGuardrail.class })
         String chatWithOutputGuardrails(String message);
+    }
+
+    @RegisterAiService(tools = Calculator.class)
+    @Singleton
+    interface Assistant1 extends Assistant {
+    }
+
+    @RegisterAiService(tools = Calculator.class)
+    @Singleton
+    interface Assistant2 extends Assistant {
     }
 
     @Singleton
@@ -425,9 +529,9 @@ class AuditingTests extends OpenAiBaseTest {
         }
     }
 
-    @Singleton
-    static class Auditor {
-        List<AuditSourceInfo> auditSourceInfos = new ArrayList<>();
+    static abstract class BaseAuditor {
+        private final Logger logger = Logger.getLogger(getClass());
+        List<InvocationContext> invocationContexts = new ArrayList<>();
         String systemMessage;
         String originalUserMessage;
         String aiMessageToolExecution;
@@ -435,175 +539,297 @@ class AuditingTests extends OpenAiBaseTest {
         String aiMessageResult;
         Object result;
         int failed;
-        AtomicInteger initialMessagesCreatedCounter = new AtomicInteger(0);
-        AtomicInteger llmInteractionCompleteCounter = new AtomicInteger(0);
-        AtomicInteger llmInteractionFailedCounter = new AtomicInteger(0);
-        AtomicInteger responseFromLLMReceivedCounter = new AtomicInteger(0);
+        AtomicInteger aiServiceStartedCounter = new AtomicInteger(0);
+        AtomicInteger aiServiceCompletedCounter = new AtomicInteger(0);
+        AtomicInteger aiServiceErrorCounter = new AtomicInteger(0);
+        AtomicInteger aiResponseReceivedCounter = new AtomicInteger(0);
         AtomicInteger toolExecutedCounter = new AtomicInteger(0);
 
-        public void initialMessagesCreated(@Observes InitialMessagesCreatedEvent initialMessagesCreatedEvent) {
-            assertThat(initialMessagesCreatedEvent)
-                    .isNotNull()
-                    .isExactlyInstanceOf(DefaultInitialMessagesCreatedEvent.class);
-            handle(initialMessagesCreatedEvent);
+        protected void init() {
+            this.invocationContexts = new ArrayList<>();
+            this.systemMessage = null;
+            this.originalUserMessage = null;
+            this.aiMessageToolExecution = null;
+            this.toolResult = null;
+            this.aiMessageResult = null;
+            this.result = null;
+            this.failed = 0;
+            this.aiServiceStartedCounter.set(0);
+            this.aiServiceCompletedCounter.set(0);
+            this.aiServiceErrorCounter.set(0);
+            this.aiResponseReceivedCounter.set(0);
+            this.toolExecutedCounter.set(0);
+        }
 
-            if (captureEvent(initialMessagesCreatedEvent.sourceInfo())) {
-                this.initialMessagesCreatedCounter.incrementAndGet();
-                this.systemMessage = initialMessagesCreatedEvent.systemMessage()
+        protected void aiServiceStarted(AiServiceStartedEvent serviceStartedEvent) {
+            assertThat(serviceStartedEvent)
+                    .isNotNull()
+                    .isExactlyInstanceOf(DefaultAiServiceStartedEvent.class);
+            handle(serviceStartedEvent);
+
+            if (captureEvent(serviceStartedEvent.invocationContext())) {
+                this.aiServiceStartedCounter.incrementAndGet();
+                this.systemMessage = serviceStartedEvent.systemMessage()
                         .map(SystemMessage::text)
                         .orElse(null);
-                this.originalUserMessage = initialMessagesCreatedEvent.userMessage().singleText();
+                this.originalUserMessage = serviceStartedEvent.userMessage().singleText();
             }
         }
 
-        public void llmInteractionComplete(@Observes LLMInteractionCompleteEvent llmInteractionCompleteEvent) {
-            assertThat(llmInteractionCompleteEvent)
+        protected void aiServiceCompleted(AiServiceCompletedEvent serviceCompletedEvent) {
+            assertThat(serviceCompletedEvent)
                     .isNotNull()
-                    .isExactlyInstanceOf(DefaultLLMInteractionCompleteEvent.class);
-            handle(llmInteractionCompleteEvent);
+                    .isExactlyInstanceOf(DefaultAiServiceCompletedEvent.class);
+            handle(serviceCompletedEvent);
 
-            if (captureEvent(llmInteractionCompleteEvent.sourceInfo())) {
-                this.llmInteractionCompleteCounter.incrementAndGet();
-                this.result = llmInteractionCompleteEvent.result();
+            if (captureEvent(serviceCompletedEvent.invocationContext())) {
+                this.aiServiceCompletedCounter.incrementAndGet();
+                this.result = serviceCompletedEvent.result();
             }
         }
 
-        public void llmInteractionFailed(@Observes LLMInteractionFailureEvent llmInteractionFailureEvent) {
-            assertThat(llmInteractionFailureEvent)
+        protected void aiServiceError(AiServiceErrorEvent serviceErrorEvent) {
+            assertThat(serviceErrorEvent)
                     .isNotNull()
-                    .isExactlyInstanceOf(DefaultLLMInteractionFailureEvent.class);
-            handle(llmInteractionFailureEvent);
+                    .isExactlyInstanceOf(DefaultAiServiceErrorEvent.class);
+            handle(serviceErrorEvent);
 
-            if (captureEvent(llmInteractionFailureEvent.sourceInfo())) {
-                this.llmInteractionFailedCounter.incrementAndGet();
+            if (captureEvent(serviceErrorEvent.invocationContext())) {
+                this.aiServiceErrorCounter.incrementAndGet();
                 this.failed++;
             }
         }
 
-        public void responseFromLLMReceived(@Observes ResponseFromLLMReceivedEvent responseFromLLMReceivedEvent) {
-            assertThat(responseFromLLMReceivedEvent)
+        protected void serviceResponseReceived(AiServiceResponseReceivedEvent serviceResponseReceivedEvent) {
+            assertThat(serviceResponseReceivedEvent)
                     .isNotNull()
-                    .isExactlyInstanceOf(DefaultResponseFromLLMReceivedEvent.class);
-            handle(responseFromLLMReceivedEvent);
+                    .isExactlyInstanceOf(DefaultAiServiceResponseReceivedEvent.class);
+            handle(serviceResponseReceivedEvent);
 
-            if (captureEvent(responseFromLLMReceivedEvent.sourceInfo())) {
-                this.responseFromLLMReceivedCounter.incrementAndGet();
+            if (captureEvent(serviceResponseReceivedEvent.invocationContext())) {
+                this.aiResponseReceivedCounter.incrementAndGet();
 
-                if (responseFromLLMReceivedEvent.response().aiMessage().text() != null) {
-                    this.aiMessageResult = responseFromLLMReceivedEvent.response().aiMessage().text();
+                if (serviceResponseReceivedEvent.response().aiMessage().text() != null) {
+                    this.aiMessageResult = serviceResponseReceivedEvent.response().aiMessage().text();
                 } else {
-                    this.aiMessageToolExecution = responseFromLLMReceivedEvent.response().aiMessage().toolExecutionRequests()
+                    this.aiMessageToolExecution = serviceResponseReceivedEvent.response().aiMessage().toolExecutionRequests()
                             .get(0)
                             .name();
                 }
             }
         }
 
-        public void toolExecuted(@Observes ToolExecutedEvent toolExecutedEvent) {
+        protected void toolExecuted(ToolExecutedEvent toolExecutedEvent) {
             assertThat(toolExecutedEvent)
                     .isNotNull()
                     .isExactlyInstanceOf(DefaultToolExecutedEvent.class);
             handle(toolExecutedEvent);
 
-            if (captureEvent(toolExecutedEvent.sourceInfo())) {
+            if (captureEvent(toolExecutedEvent.invocationContext())) {
                 this.toolExecutedCounter.incrementAndGet();
-                this.toolResult = toolExecutedEvent.result();
+                this.toolResult = toolExecutedEvent.resultText();
             }
         }
 
-        private void handle(LLMInteractionEvent llmInteractionEvent) {
-            var sourceInfo = llmInteractionEvent.sourceInfo();
-            Log.infof("Got LLM interaction: %s", sourceInfo);
+        private void handle(AiServiceEvent aiServiceEvent) {
+            var invocationContext = aiServiceEvent.invocationContext();
+            logger.infof("Got [%s] Event: %s", aiServiceEvent.eventClass().getSimpleName(), invocationContext);
 
-            if (captureEvent(sourceInfo)) {
-                this.auditSourceInfos.add(sourceInfo);
+            if (captureEvent(invocationContext)) {
+                this.invocationContexts.add(invocationContext);
             }
         }
 
-        private static boolean captureEvent(AuditSourceInfo sourceInfo) {
-            return "chat".equals(sourceInfo.methodName());
+        private static boolean captureEvent(InvocationContext invocationContext) {
+            return "chat".equals(invocationContext.methodName());
         }
     }
 
     @Singleton
-    static class InputGuardrailAuditor {
-        /**
-         * @deprecated These tests will go away once the Quarkus-specific guardrail implementation has been fully removed
-         */
-        @Deprecated(forRemoval = true)
-        List<io.quarkiverse.langchain4j.audit.InputGuardrailExecutedEvent> quarkusInputGuardrailExecutedEvents = new ArrayList<>();
-        List<InputGuardrailExecutedEvent> inputGuardrailExecutedEvents = new ArrayList<>();
+    static class AllServicesAuditor extends BaseAuditor {
+        @Override
+        public void aiServiceStarted(@Observes AiServiceStartedEvent serviceStartedEvent) {
+            super.aiServiceStarted(serviceStartedEvent);
+        }
 
-        /**
-         * @deprecated These tests will go away once the Quarkus-specific guardrail implementation has been fully removed
-         */
-        @Deprecated(forRemoval = true)
-        public void inputGuardrailExecuted(
-                @Observes io.quarkiverse.langchain4j.audit.InputGuardrailExecutedEvent inputGuardrailExecutedEvent) {
-            assertThat(inputGuardrailExecutedEvent)
+        @Override
+        public void aiServiceCompleted(@Observes AiServiceCompletedEvent serviceCompletedEvent) {
+            super.aiServiceCompleted(serviceCompletedEvent);
+        }
+
+        @Override
+        public void aiServiceError(@Observes AiServiceErrorEvent serviceErrorEvent) {
+            super.aiServiceError(serviceErrorEvent);
+        }
+
+        @Override
+        public void serviceResponseReceived(@Observes AiServiceResponseReceivedEvent serviceResponseReceivedEvent) {
+            super.serviceResponseReceived(serviceResponseReceivedEvent);
+        }
+
+        @Override
+        public void toolExecuted(@Observes ToolExecutedEvent toolExecutedEvent) {
+            super.toolExecuted(toolExecutedEvent);
+        }
+    }
+
+    @Singleton
+    static class Assistant1ServicesAuditor extends BaseAuditor {
+        @Override
+        public void aiServiceStarted(@Observes @AiServiceSelector(Assistant1.class) AiServiceStartedEvent serviceStartedEvent) {
+            super.aiServiceStarted(serviceStartedEvent);
+        }
+
+        @Override
+        public void aiServiceCompleted(
+                @Observes @AiServiceSelector(Assistant1.class) AiServiceCompletedEvent serviceCompletedEvent) {
+            super.aiServiceCompleted(serviceCompletedEvent);
+        }
+
+        @Override
+        public void aiServiceError(@Observes @AiServiceSelector(Assistant1.class) AiServiceErrorEvent serviceErrorEvent) {
+            super.aiServiceError(serviceErrorEvent);
+        }
+
+        @Override
+        public void serviceResponseReceived(
+                @Observes @AiServiceSelector(Assistant1.class) AiServiceResponseReceivedEvent serviceResponseReceivedEvent) {
+            super.serviceResponseReceived(serviceResponseReceivedEvent);
+        }
+
+        @Override
+        public void toolExecuted(@Observes @AiServiceSelector(Assistant1.class) ToolExecutedEvent toolExecutedEvent) {
+            super.toolExecuted(toolExecutedEvent);
+        }
+    }
+
+    @Singleton
+    static class Assistant2ServicesAuditor extends BaseAuditor {
+        @Override
+        public void aiServiceStarted(@Observes @AiServiceSelector(Assistant2.class) AiServiceStartedEvent serviceStartedEvent) {
+            super.aiServiceStarted(serviceStartedEvent);
+        }
+
+        @Override
+        public void aiServiceCompleted(
+                @Observes @AiServiceSelector(Assistant2.class) AiServiceCompletedEvent serviceCompletedEvent) {
+            super.aiServiceCompleted(serviceCompletedEvent);
+        }
+
+        @Override
+        public void aiServiceError(@Observes @AiServiceSelector(Assistant2.class) AiServiceErrorEvent serviceErrorEvent) {
+            super.aiServiceError(serviceErrorEvent);
+        }
+
+        @Override
+        public void serviceResponseReceived(
+                @Observes @AiServiceSelector(Assistant2.class) AiServiceResponseReceivedEvent serviceResponseReceivedEvent) {
+            super.serviceResponseReceived(serviceResponseReceivedEvent);
+        }
+
+        @Override
+        public void toolExecuted(@Observes @AiServiceSelector(Assistant2.class) ToolExecutedEvent toolExecutedEvent) {
+            super.toolExecuted(toolExecutedEvent);
+        }
+    }
+
+    static abstract class BaseGuardrailAuditor<E extends GuardrailExecutedEvent> {
+        List<E> events = new ArrayList<>();
+        private final Class<? extends E> guardrailExecutedEventClass;
+        private final String chatMethodName;
+
+        protected BaseGuardrailAuditor(Class<? extends E> guardrailExecutedEventClass, String chatMethodName) {
+            this.guardrailExecutedEventClass = guardrailExecutedEventClass;
+            this.chatMethodName = chatMethodName;
+        }
+
+        protected void init() {
+            this.events.clear();
+        }
+
+        protected void guardrailExecuted(E guardrailExecutedEvent) {
+            assertThat(guardrailExecutedEvent)
                     .isNotNull()
-                    .isExactlyInstanceOf(io.quarkiverse.langchain4j.audit.internal.DefaultInputGuardrailExecutedEvent.class);
-            handle(inputGuardrailExecutedEvent);
+                    .isExactlyInstanceOf(this.guardrailExecutedEventClass);
+            handle(guardrailExecutedEvent);
 
-            if ("chatWithQuarkusInputGuardrails".equals(inputGuardrailExecutedEvent.sourceInfo().methodName())) {
-                this.quarkusInputGuardrailExecutedEvents.add(inputGuardrailExecutedEvent);
+            if (this.chatMethodName.equals(guardrailExecutedEvent.invocationContext().methodName())) {
+                this.events.add(guardrailExecutedEvent);
             }
+        }
+
+        private static void handle(AiServiceEvent aiServiceEvent) {
+            Log.infof("Got AI Service event: %s", aiServiceEvent.invocationContext());
+        }
+    }
+
+    @Singleton
+    static class AllServicesInputGuardrailAuditor extends BaseGuardrailAuditor<InputGuardrailExecutedEvent> {
+        AllServicesInputGuardrailAuditor() {
+            super(DefaultInputGuardrailExecutedEvent.class, "chatWithInputGuardrails");
         }
 
         public void inputGuardrailExecuted(@Observes InputGuardrailExecutedEvent inputGuardrailExecutedEvent) {
-            assertThat(inputGuardrailExecutedEvent)
-                    .isNotNull()
-                    .isExactlyInstanceOf(DefaultInputGuardrailExecutedEvent.class);
-            handle(inputGuardrailExecutedEvent);
-
-            if ("chatWithQuarkusInputGuardrails".equals(inputGuardrailExecutedEvent.sourceInfo().methodName())) {
-                this.inputGuardrailExecutedEvents.add(inputGuardrailExecutedEvent);
-            }
-        }
-
-        private static void handle(LLMInteractionEvent llmInteractionEvent) {
-            Log.infof("Got LLM interaction: %s", llmInteractionEvent.sourceInfo());
+            guardrailExecuted(inputGuardrailExecutedEvent);
         }
     }
 
     @Singleton
-    static class OutputGuardrailAuditor {
-        /**
-         * @deprecated These tests will go away once the Quarkus-specific guardrail implementation has been fully removed
-         */
-        @Deprecated(forRemoval = true)
-        List<io.quarkiverse.langchain4j.audit.OutputGuardrailExecutedEvent> quarkusOutputGuardrailExecutedEvents = new ArrayList<>();
-        List<OutputGuardrailExecutedEvent> outputGuardrailExecutedEvents = new ArrayList<>();
+    static class Assistant1InputGuardrailAuditor extends BaseGuardrailAuditor<InputGuardrailExecutedEvent> {
+        Assistant1InputGuardrailAuditor() {
+            super(DefaultInputGuardrailExecutedEvent.class, "chatWithInputGuardrails");
+        }
 
-        /**
-         * @deprecated These tests will go away once the Quarkus-specific guardrail implementation has been fully removed
-         */
-        @Deprecated(forRemoval = true)
-        public void outputGuardrailExecuted(
-                @Observes io.quarkiverse.langchain4j.audit.OutputGuardrailExecutedEvent outputGuardrailExecutedEvent) {
-            assertThat(outputGuardrailExecutedEvent)
-                    .isNotNull()
-                    .isExactlyInstanceOf(io.quarkiverse.langchain4j.audit.internal.DefaultOutputGuardrailExecutedEvent.class);
-            handle(outputGuardrailExecutedEvent);
+        public void inputGuardrailExecuted(
+                @Observes @AiServiceSelector(Assistant1.class) InputGuardrailExecutedEvent inputGuardrailExecutedEvent) {
+            guardrailExecuted(inputGuardrailExecutedEvent);
+        }
+    }
 
-            if ("chatWithQuarkusOutputGuardrails".equals(outputGuardrailExecutedEvent.sourceInfo().methodName())) {
-                this.quarkusOutputGuardrailExecutedEvents.add(outputGuardrailExecutedEvent);
-            }
+    @Singleton
+    static class Assistant2InputGuardrailAuditor extends BaseGuardrailAuditor<InputGuardrailExecutedEvent> {
+        Assistant2InputGuardrailAuditor() {
+            super(DefaultInputGuardrailExecutedEvent.class, "chatWithInputGuardrails");
+        }
+
+        public void inputGuardrailExecuted(
+                @Observes @AiServiceSelector(Assistant2.class) InputGuardrailExecutedEvent inputGuardrailExecutedEvent) {
+            guardrailExecuted(inputGuardrailExecutedEvent);
+        }
+    }
+
+    @Singleton
+    static class AllServicesOutputGuardrailAuditor extends BaseGuardrailAuditor<OutputGuardrailExecutedEvent> {
+        AllServicesOutputGuardrailAuditor() {
+            super(DefaultOutputGuardrailExecutedEvent.class, "chatWithOutputGuardrails");
         }
 
         public void outputGuardrailExecuted(@Observes OutputGuardrailExecutedEvent outputGuardrailExecutedEvent) {
-            assertThat(outputGuardrailExecutedEvent)
-                    .isNotNull()
-                    .isExactlyInstanceOf(DefaultOutputGuardrailExecutedEvent.class);
-            handle(outputGuardrailExecutedEvent);
+            guardrailExecuted(outputGuardrailExecutedEvent);
+        }
+    }
 
-            if ("chatWithQuarkusOutputGuardrails".equals(outputGuardrailExecutedEvent.sourceInfo().methodName())) {
-                this.outputGuardrailExecutedEvents.add(outputGuardrailExecutedEvent);
-            }
+    @Singleton
+    static class Assistant1OutputGuardrailAuditor extends BaseGuardrailAuditor<OutputGuardrailExecutedEvent> {
+        Assistant1OutputGuardrailAuditor() {
+            super(DefaultOutputGuardrailExecutedEvent.class, "chatWithOutputGuardrails");
         }
 
-        private static void handle(LLMInteractionEvent llmInteractionEvent) {
-            Log.infof("Got LLM interaction: %s", llmInteractionEvent.sourceInfo());
+        public void outputGuardrailExecuted(
+                @Observes @AiServiceSelector(Assistant1.class) OutputGuardrailExecutedEvent outputGuardrailExecutedEvent) {
+            guardrailExecuted(outputGuardrailExecutedEvent);
+        }
+    }
+
+    @Singleton
+    static class Assistant2OutputGuardrailAuditor extends BaseGuardrailAuditor<OutputGuardrailExecutedEvent> {
+        Assistant2OutputGuardrailAuditor() {
+            super(DefaultOutputGuardrailExecutedEvent.class, "chatWithOutputGuardrails");
+        }
+
+        public void outputGuardrailExecuted(
+                @Observes @AiServiceSelector(Assistant2.class) OutputGuardrailExecutedEvent outputGuardrailExecutedEvent) {
+            guardrailExecuted(outputGuardrailExecutedEvent);
         }
     }
 }

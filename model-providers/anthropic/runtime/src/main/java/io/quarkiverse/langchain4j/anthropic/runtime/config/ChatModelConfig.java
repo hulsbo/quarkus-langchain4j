@@ -3,6 +3,7 @@ package io.quarkiverse.langchain4j.anthropic.runtime.config;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
+import java.util.OptionalInt;
 
 import io.quarkus.runtime.annotations.ConfigDocDefault;
 import io.quarkus.runtime.annotations.ConfigGroup;
@@ -47,8 +48,8 @@ public interface ChatModelConfig {
      * Reduces the probability of generating nonsense. A higher value (e.g. 100) will give more diverse answers, while a lower
      * value (e.g. 10) will be more conservative
      */
-    @WithDefault("40")
-    Integer topK();
+    @ConfigDocDefault("40")
+    OptionalInt topK();
 
     /**
      * The maximum number of times to retry. 1 means exactly one attempt, with retrying disabled.
@@ -75,4 +76,35 @@ public interface ChatModelConfig {
      */
     @ConfigDocDefault("false")
     Optional<Boolean> logResponses();
+
+    /**
+     * Thinking related configuration
+     */
+    ThinkingConfig thinking();
+
+    @ConfigGroup
+    interface ThinkingConfig {
+
+        /**
+         * The thinking type to enable Claude's reasoning process
+         */
+        Optional<String> type();
+
+        /**
+         * The token budget for the model's thinking process
+         */
+        Optional<Integer> budgetTokens();
+
+        /**
+         * Whether thinking results should be returned in the response
+         */
+        @ConfigDocDefault("false")
+        Optional<Boolean> returnThinking();
+
+        /**
+         * Whether previously stored thinking should be sent in follow-up requests
+         */
+        @ConfigDocDefault("true")
+        Optional<Boolean> sendThinking();
+    }
 }

@@ -10,7 +10,6 @@
   <name>Quarkus LangChain4j - Integration Tests - RAG With PgVector</name>
   <properties>
     <skipITs>true</skipITs>
-    <quarkus-langchain4j.version>999-SNAPSHOT</quarkus-langchain4j.version>
   </properties>
   <dependencies>
     <dependency>
@@ -20,19 +19,16 @@
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
-      <version>${langchain4j-embeddings.version}</version>
     </dependency>
     <!-- The tests use a mock ChatModel, but we still need to include an
       extension with a chat model to satisfy the build -->
     <dependency>
       <groupId>io.quarkiverse.langchain4j</groupId>
       <artifactId>quarkus-langchain4j-openai</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkiverse.langchain4j</groupId>
       <artifactId>quarkus-langchain4j-pgvector</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -47,7 +43,6 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>${assertj.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -55,27 +50,13 @@
       <artifactId>quarkus-devtools-testing</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <!-- Make sure the deployment artifact is built before executing this module -->
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-openai-deployment</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-      <type>pom</type>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
-        <groupId>io.quarkus</groupId>
+        <groupId>${quarkus.platform.group-id}</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
+        <version>${quarkus.platform.version}</version>
         <executions>
           <execution>
             <goals>
@@ -105,6 +86,30 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>default-project-deps</id>
+      <activation>
+        <property>
+          <name>!platform-deps</name>
+        </property>
+      </activation>
+      <dependencies>
+        <!-- Make sure the deployment artifact is built before executing this module -->
+        <dependency>
+          <groupId>io.quarkiverse.langchain4j</groupId>
+          <artifactId>quarkus-langchain4j-openai-deployment</artifactId>
+          <version>999-SNAPSHOT</version>
+          <type>pom</type>
+          <scope>test</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>*</groupId>
+              <artifactId>*</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
     <profile>
       <id>native-image</id>
       <activation>

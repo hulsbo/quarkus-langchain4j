@@ -4,9 +4,15 @@ import static io.quarkiverse.langchain4j.runtime.OptionalUtil.firstOrDefault;
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.util.TypeLiteral;
 
 import dev.langchain4j.model.bedrock.BedrockChatModel;
 import dev.langchain4j.model.bedrock.BedrockCohereEmbeddingModel;
@@ -16,6 +22,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.DisabledChatModel;
 import dev.langchain4j.model.chat.DisabledStreamingChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.model.chat.request.ChatRequestParameters;
 import dev.langchain4j.model.embedding.DisabledEmbeddingModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -24,6 +31,7 @@ import io.quarkiverse.langchain4j.bedrock.runtime.config.LangChain4jBedrockConfi
 import io.quarkiverse.langchain4j.runtime.NamedConfigUtil;
 import io.quarkiverse.langchain4j.runtime.config.LangChain4jConfig;
 import io.quarkus.arc.Arc;
+import io.quarkus.arc.SyntheticCreationalContext;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
@@ -36,6 +44,10 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 @Recorder
 public class BedrockRecorder {
+
+    private static final TypeLiteral<Instance<ChatModelListener>> CHAT_MODEL_LISTENER_TYPE_LITERAL = new TypeLiteral<>() {
+    };
+
     private final RuntimeValue<LangChain4jConfig> rootRuntimeConfig;
     private final RuntimeValue<LangChain4jBedrockConfig> runtimeConfig;
 
@@ -45,7 +57,7 @@ public class BedrockRecorder {
         this.runtimeConfig = runtimeConfig;
     }
 
-    public Supplier<ChatModel> chatModel(String configName) {
+    public Function<SyntheticCreationalContext<ChatModel>, ChatModel> chatModel(String configName) {
         LangChain4jBedrockConfig.BedrockConfig config = correspondingBedrockConfig(configName);
 
         if (config.enableIntegration()) {
@@ -67,7 +79,10 @@ public class BedrockRecorder {
             }
 
             if (modelConfig.stopSequences().isPresent()) {
-                paramBuilder.stopSequences(modelConfig.stopSequences().get().toArray(new String[0]));
+                List<String> stopSequences = modelConfig.stopSequences().get();
+                if (!stopSequences.isEmpty()) {
+                    paramBuilder.stopSequences(stopSequences.toArray(new String[0]));
+                }
             }
 
             var clientBuilder = BedrockRuntimeClient.builder();
@@ -82,16 +97,18 @@ public class BedrockRecorder {
                     .client(clientBuilder.build())
                     .defaultRequestParameters(paramBuilder.build());
 
-            return new Supplier<ChatModel>() {
+            return new Function<>() {
                 @Override
-                public ChatModel get() {
+                public ChatModel apply(SyntheticCreationalContext<ChatModel> context) {
+                    builder.listeners(context.getInjectedReference(CHAT_MODEL_LISTENER_TYPE_LITERAL).stream()
+                            .collect(Collectors.toList()));
                     return builder.build();
                 }
             };
         } else {
-            return new Supplier<ChatModel>() {
+            return new Function<>() {
                 @Override
-                public ChatModel get() {
+                public ChatModel apply(SyntheticCreationalContext<ChatModel> context) {
                     return new DisabledChatModel();
                 }
             };
@@ -114,7 +131,8 @@ public class BedrockRecorder {
                         cp.getClass().getName()));
     }
 
-    public Supplier<StreamingChatModel> streamingChatModel(final String configName) {
+    public Function<SyntheticCreationalContext<StreamingChatModel>, StreamingChatModel> streamingChatModel(
+            final String configName) {
         LangChain4jBedrockConfig.BedrockConfig config = correspondingBedrockConfig(configName);
 
         if (config.enableIntegration()) {
@@ -153,18 +171,18 @@ public class BedrockRecorder {
                     .client(clientBuilder.build())
                     .defaultRequestParameters(paramsBuilder.build());
 
-            Supplier<StreamingChatModel> supplier = new Supplier<StreamingChatModel>() {
+            return new Function<>() {
                 @Override
-                public StreamingChatModel get() {
+                public StreamingChatModel apply(SyntheticCreationalContext<StreamingChatModel> context) {
+                    builder.listeners(context.getInjectedReference(CHAT_MODEL_LISTENER_TYPE_LITERAL).stream()
+                            .collect(Collectors.toList()));
                     return builder.build();
                 }
             };
-
-            return supplier;
         } else {
-            return new Supplier<StreamingChatModel>() {
+            return new Function<>() {
                 @Override
-                public StreamingChatModel get() {
+                public StreamingChatModel apply(SyntheticCreationalContext<StreamingChatModel> context) {
                     return new DisabledStreamingChatModel();
                 }
             };

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +37,7 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.jboss.logging.Logger;
 
+import dev.langchain4j.agent.tool.ReturnBehavior;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.audio.Audio;
@@ -52,6 +54,8 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.pdf.PdfFile;
 import dev.langchain4j.guardrail.ChatExecutor;
 import dev.langchain4j.guardrail.GuardrailRequestParams;
+import dev.langchain4j.invocation.InvocationContext;
+import dev.langchain4j.invocation.InvocationParameters;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
@@ -66,17 +70,25 @@ import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.model.input.structured.StructuredPrompt;
 import dev.langchain4j.model.input.structured.StructuredPromptProcessor;
 import dev.langchain4j.model.moderation.Moderation;
+import dev.langchain4j.model.output.FinishReason;
 import dev.langchain4j.model.output.Response;
 import dev.langchain4j.model.output.TokenUsage;
+import dev.langchain4j.observability.api.event.AiServiceCompletedEvent;
+import dev.langchain4j.observability.api.event.AiServiceErrorEvent;
+import dev.langchain4j.observability.api.event.AiServiceResponseReceivedEvent;
+import dev.langchain4j.observability.api.event.AiServiceStartedEvent;
 import dev.langchain4j.rag.AugmentationRequest;
 import dev.langchain4j.rag.AugmentationResult;
 import dev.langchain4j.rag.query.Metadata;
 import dev.langchain4j.service.AiServiceContext;
 import dev.langchain4j.service.AiServiceTokenStream;
 import dev.langchain4j.service.AiServiceTokenStreamParameters;
+import dev.langchain4j.service.IllegalConfigurationException;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.output.ServiceOutputParser;
 import dev.langchain4j.service.tool.ToolErrorHandlerResult;
+import dev.langchain4j.service.tool.ToolExecution;
+import dev.langchain4j.service.tool.ToolExecutionResult;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
@@ -92,14 +104,12 @@ import io.quarkiverse.langchain4j.audit.internal.DefaultLLMInteractionCompleteEv
 import io.quarkiverse.langchain4j.audit.internal.DefaultLLMInteractionFailureEvent;
 import io.quarkiverse.langchain4j.audit.internal.DefaultResponseFromLLMReceivedEvent;
 import io.quarkiverse.langchain4j.audit.internal.DefaultToolExecutedEvent;
-import io.quarkiverse.langchain4j.guardrails.OutputGuardrailParams;
-import io.quarkiverse.langchain4j.guardrails.OutputGuardrailResult;
 import io.quarkiverse.langchain4j.response.ResponseAugmenterParams;
 import io.quarkiverse.langchain4j.runtime.ContextLocals;
 import io.quarkiverse.langchain4j.runtime.QuarkusServiceOutputParser;
 import io.quarkiverse.langchain4j.runtime.ResponseSchemaUtil;
-import io.quarkiverse.langchain4j.runtime.aiservice.GuardrailsSupport.GuardrailRetryException;
 import io.quarkiverse.langchain4j.runtime.aiservice.GuardrailsSupport.OutputGuardrailStreamingMapper;
+import io.quarkiverse.langchain4j.runtime.tool.QuarkusToolExecutor;
 import io.quarkiverse.langchain4j.runtime.types.TypeUtil;
 import io.quarkiverse.langchain4j.spi.DefaultMemoryIdProvider;
 import io.quarkus.arc.Arc;
@@ -108,7 +118,8 @@ import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.vertx.core.Context;
 
 /**
- * Provides the basic building blocks that the generated Interface methods call into
+ * Provides the basic building blocks that the generated Interface methods call
+ * into
  */
 public class AiServiceMethodImplementationSupport {
 
@@ -116,7 +127,9 @@ public class AiServiceMethodImplementationSupport {
     private static final int DEFAULT_MAX_SEQUENTIAL_TOOL_EXECUTIONS = 10;
     private static final List<DefaultMemoryIdProvider> DEFAULT_MEMORY_ID_PROVIDERS;
 
-    private static final ServiceOutputParser SERVICE_OUTPUT_PARSER = new QuarkusServiceOutputParser(); // TODO: this might need to be improved
+    private static final ServiceOutputParser SERVICE_OUTPUT_PARSER = new QuarkusServiceOutputParser(); // TODO: this
+                                                                                                       // might need to
+                                                                                                       // be improved
 
     static {
         var defaultMemoryIdProviders = ServiceHelper.loadFactories(
@@ -147,29 +160,58 @@ public class AiServiceMethodImplementationSupport {
         AiServiceMethodCreateInfo createInfo = input.createInfo;
         Object[] methodArgs = input.methodArgs;
 
+        InvocationContext invocationContext = InvocationContext.builder()
+                .invocationId(UUID.randomUUID())
+                .interfaceName(context.aiServiceClass.getName())
+                .methodName(createInfo.getMethodName())
+                .methodArguments((methodArgs != null) ? Arrays.asList(methodArgs) : List.of())
+                .chatMemoryId(memoryId(createInfo, methodArgs, context.hasChatMemory()))
+                .invocationParameters(findInvocationParams(methodArgs))
+                .timestampNow()
+                .build();
+
+        /**
+         * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+         */
         var auditSourceInfo = new AuditSourceInfoImpl(createInfo, methodArgs);
         var beanManager = Arc.container().beanManager();
 
         // TODO: add validation
         try {
-            var result = doImplement(createInfo, methodArgs, context, auditSourceInfo);
+            var result = doImplement(createInfo, invocationContext, context, auditSourceInfo);
 
+            /**
+             * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+             */
+            // This firing here is actually a bug
+            // It'll go away after https://github.com/quarkiverse/quarkus-langchain4j/issues/1736 is complete
             beanManager.getEvent().select(LLMInteractionCompleteEvent.class)
                     .fire(new DefaultLLMInteractionCompleteEvent(auditSourceInfo, result));
 
             return result;
         } catch (Exception e) {
+            /**
+             * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+             */
             beanManager.getEvent().select(LLMInteractionFailureEvent.class)
                     .fire(new DefaultLLMInteractionFailureEvent(auditSourceInfo, e));
+
+            // New firing
+            context.eventListenerRegistrar.fireEvent(
+                    AiServiceErrorEvent.builder()
+                            .invocationContext(invocationContext)
+                            .error(e)
+                            .build());
 
             throw e;
         }
     }
 
-    private static Object doImplement(AiServiceMethodCreateInfo methodCreateInfo, Object[] methodArgs,
+    private static Object doImplement(AiServiceMethodCreateInfo methodCreateInfo, InvocationContext invocationContext,
             QuarkusAiServiceContext context, AuditSourceInfo auditSourceInfo) {
         boolean isRunningOnWorkerThread = !Context.isOnEventLoopThread();
-        Object memoryId = memoryId(methodCreateInfo, methodArgs, context.hasChatMemory());
+        Object[] methodArgs = invocationContext.methodArguments().toArray(Object[]::new);
+        Object memoryId = invocationContext.chatMemoryId();
         Optional<SystemMessage> systemMessage = prepareSystemMessage(methodCreateInfo, methodArgs, context, memoryId);
 
         boolean supportsJsonSchema = supportsJsonSchema(context, methodCreateInfo, methodArgs);
@@ -183,15 +225,28 @@ public class AiServiceMethodImplementationSupport {
         final boolean isStringMulti = (isMulti && returnType instanceof ParameterizedType
                 && TypeUtil.isTypeOf(((ParameterizedType) returnType).getActualTypeArguments()[0], String.class));
         if (TypeUtil.isImage(returnType) || TypeUtil.isResultImage(returnType)) {
-            return doImplementGenerateImage(methodCreateInfo, context, systemMessage, userMessage, memoryId, returnType,
+            return doImplementGenerateImage(methodCreateInfo, context, invocationContext, systemMessage, userMessage, memoryId,
+                    returnType,
                     templateVariables, auditSourceInfo);
         }
 
         var beanManager = Arc.container().beanManager();
+        /**
+         * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+         */
         beanManager.getEvent().select(InitialMessagesCreatedEvent.class)
                 .fire(new DefaultInitialMessagesCreatedEvent(auditSourceInfo, systemMessage, userMessage));
 
-        boolean needsMemorySeed = needsMemorySeed(context, memoryId); // we need to know figure this out before we add the system and user message
+        // New firing
+        context.eventListenerRegistrar.fireEvent(
+                AiServiceStartedEvent.builder()
+                        .invocationContext(invocationContext)
+                        .systemMessage(systemMessage)
+                        .userMessage(userMessage)
+                        .build());
+
+        boolean needsMemorySeed = needsMemorySeed(context, memoryId); // we need to know figure this out before we add
+                                                                      // the system and user message
 
         boolean hasMethodSpecificTools = methodCreateInfo.getToolClassInfo() != null
                 && !methodCreateInfo.getToolClassInfo().isEmpty();
@@ -219,7 +274,11 @@ public class AiServiceMethodImplementationSupport {
             List<ChatMessage> chatMemory = context.hasChatMemory()
                     ? context.chatMemoryService.getChatMemory(memoryId).messages()
                     : null;
-            Metadata metadata = Metadata.from(userMessage, memoryId, chatMemory);
+            Metadata metadata = Metadata.builder()
+                    .chatMessage(userMessage)
+                    .chatMemory(chatMemory)
+                    .invocationContext(invocationContext)
+                    .build();
             AugmentationRequest augmentationRequest = new AugmentationRequest(userMessage, metadata);
 
             if (!isMulti) {
@@ -227,13 +286,15 @@ public class AiServiceMethodImplementationSupport {
                 userMessage = (UserMessage) augmentationResult.chatMessage();
             } else {
                 // TODO duplicated context propagation.
-                // this a special case where we can't block, so we need to delegate the retrieval augmentation to a worker pool
-                CompletableFuture<AugmentationResult> augmentationResultCF = CompletableFuture.supplyAsync(new Supplier<>() {
-                    @Override
-                    public AugmentationResult get() {
-                        return context.retrievalAugmentor.augment(augmentationRequest);
-                    }
-                }, Infrastructure.getDefaultWorkerPool());
+                // this a special case where we can't block, so we need to delegate the
+                // retrieval augmentation to a worker pool
+                CompletableFuture<AugmentationResult> augmentationResultCF = CompletableFuture
+                        .supplyAsync(new Supplier<>() {
+                            @Override
+                            public AugmentationResult get() {
+                                return context.retrievalAugmentor.augment(augmentationRequest);
+                            }
+                        }, Infrastructure.getDefaultWorkerPool());
 
                 return Multi.createFrom().completionStage(augmentationResultCF).flatMap(
                         new Function<>() {
@@ -242,22 +303,28 @@ public class AiServiceMethodImplementationSupport {
                                 ChatMessage augmentedUserMessage = ar.chatMessage();
 
                                 ChatMemory memory = context.chatMemoryService.getChatMemory(memoryId);
-                                /**
-                                 * @deprecated Deprecated in favor of upstream implementation
-                                 */
-                                UserMessage guardrailsMessage = GuardrailsSupport.invokeInputGuardRails(methodCreateInfo,
+                                var guardrailRequestParams = GuardrailRequestParams.builder()
+                                        .chatMemory(memory)
+                                        .augmentationResult(ar)
+                                        .userMessageTemplate(methodCreateInfo.getUserMessageTemplate())
+                                        .variables(templateVariables)
+                                        .invocationContext(invocationContext)
+                                        .aiServiceListenerRegistrar(context.eventListenerRegistrar)
+                                        .build();
+
+                                UserMessage guardrailsMessage = GuardrailsSupport.executeInputGuardrails(
+                                        context.guardrailService(),
                                         (UserMessage) augmentedUserMessage,
-                                        memory, ar, templateVariables, beanManager, auditSourceInfo);
-                                guardrailsMessage = GuardrailsSupport.executeInputGuardrails(context.guardrailService(),
-                                        guardrailsMessage,
-                                        methodCreateInfo, memory, ar, templateVariables);
+                                        methodCreateInfo, guardrailRequestParams);
                                 List<ChatMessage> messagesToSend = messagesToSend(guardrailsMessage, needsMemorySeed);
                                 var stream = new TokenStreamMulti(messagesToSend, effectiveToolSpecifications,
-                                        finalToolExecutors, ar.contents(), context, memoryId,
-                                        methodCreateInfo.isSwitchToWorkerThreadForToolExecution(), isRunningOnWorkerThread);
+                                        finalToolExecutors, ar.contents(), context, invocationContext, memoryId,
+                                        methodCreateInfo.isSwitchToWorkerThreadForToolExecution(),
+                                        isRunningOnWorkerThread);
 
                                 return stream
-                                        .filter(event -> !isStringMulti || event instanceof ChatEvent.PartialResponseEvent)
+                                        .filter(event -> !isStringMulti
+                                                || event instanceof ChatEvent.PartialResponseEvent)
                                         .map(event -> {
                                             if (isStringMulti && event instanceof ChatEvent.PartialResponseEvent) {
                                                 return ((ChatEvent.PartialResponseEvent) event).getChunk();
@@ -265,7 +332,8 @@ public class AiServiceMethodImplementationSupport {
                                             return event;
                                         })
                                         .plug(m -> ResponseAugmenterSupport.apply(m, methodCreateInfo,
-                                                new ResponseAugmenterParams((UserMessage) augmentedUserMessage, memory, ar,
+                                                new ResponseAugmenterParams((UserMessage) augmentedUserMessage, memory,
+                                                        ar,
                                                         methodCreateInfo.getUserMessageTemplate(), templateVariables)));
                             }
 
@@ -273,7 +341,8 @@ public class AiServiceMethodImplementationSupport {
                                     boolean needsMemorySeed) {
                                 return context.hasChatMemory()
                                         ? createMessagesToSendForExistingMemory(systemMessage, augmentedUserMessage,
-                                                context.chatMemoryService.getChatMemory(memoryId), needsMemorySeed, context,
+                                                context.chatMemoryService.getChatMemory(memoryId), needsMemorySeed,
+                                                context,
                                                 methodCreateInfo)
                                         : createMessagesToSendForNoMemory(systemMessage, augmentedUserMessage,
                                                 needsMemorySeed, context, methodCreateInfo);
@@ -285,20 +354,24 @@ public class AiServiceMethodImplementationSupport {
         var guardrailService = context.guardrailService();
         var chatMemory = context.hasChatMemory() ? context.chatMemoryService.getChatMemory(memoryId) : null;
 
-        /**
-         * @deprecated Deprecated in favor of upstream implementation
-         */
-        userMessage = GuardrailsSupport.invokeInputGuardRails(methodCreateInfo, userMessage, chatMemory, augmentationResult,
-                templateVariables, beanManager, auditSourceInfo);
+        var guardrailParams = GuardrailRequestParams.builder()
+                .chatMemory(chatMemory)
+                .augmentationResult(augmentationResult)
+                .userMessageTemplate(methodCreateInfo.getUserMessageTemplate())
+                .variables(templateVariables)
+                .invocationContext(invocationContext)
+                .aiServiceListenerRegistrar(context.eventListenerRegistrar)
+                .build();
 
-        userMessage = GuardrailsSupport.executeInputGuardrails(guardrailService, userMessage, methodCreateInfo, chatMemory,
-                augmentationResult, templateVariables);
+        userMessage = GuardrailsSupport.executeInputGuardrails(guardrailService, userMessage, methodCreateInfo,
+                guardrailParams);
 
         CommittableChatMemory committableChatMemory;
         List<ChatMessage> messagesToSend;
 
         if (context.hasChatMemory()) {
-            // we want to defer saving the new messages because the service could fail and be retried
+            // we want to defer saving the new messages because the service could fail and
+            // be retried
             committableChatMemory = new DefaultCommittableChatMemory(chatMemory);
             messagesToSend = createMessagesToSendForExistingMemory(systemMessage, userMessage, committableChatMemory,
                     needsMemorySeed,
@@ -310,17 +383,18 @@ public class AiServiceMethodImplementationSupport {
         }
 
         if (TypeUtil.isTokenStream(returnType)) {
-            // TODO Indicate the output guardrails cannot be used when using token stream.
-            // NOTE - only the quarkus-specific output guardrails aren't implemented using a TokenStream
+            // NOTE - only the quarkus-specific output guardrails aren't implemented using a
+            // TokenStream
             // Upstream supports it
-            committableChatMemory.commit(); // for streaming cases, we really have to commit because all alternatives are worse
+            committableChatMemory.commit(); // for streaming cases, we really have to commit because all alternatives
+                                            // are worse
             var aiServiceTokenStreamParams = AiServiceTokenStreamParameters.builder()
                     .messages(messagesToSend)
                     .toolSpecifications(toolSpecifications)
                     .toolExecutors(toolExecutors)
                     .retrievedContents((augmentationResult != null ? augmentationResult.contents() : null))
                     .context(context)
-                    .memoryId(memoryId)
+                    .invocationContext(InvocationContext.builder().chatMemoryId(memoryId).build())
                     .methodKey(methodCreateInfo)
                     .toolArgumentsErrorHandler((e, c) -> {
                         throw new RuntimeException(e);
@@ -332,6 +406,7 @@ public class AiServiceMethodImplementationSupport {
                                     .augmentationResult(augmentationResult)
                                     .userMessageTemplate(methodCreateInfo.getUserMessageTemplate())
                                     .variables(templateVariables)
+                                    .invocationContext(invocationContext)
                                     .build())
                     .build();
             return new AiServiceTokenStream(aiServiceTokenStreamParams);
@@ -341,80 +416,33 @@ public class AiServiceMethodImplementationSupport {
         var actualUserMessage = userMessage;
 
         if (isMulti) {
-            committableChatMemory.commit(); // for streaming cases, we really have to commit because all alternatives are worse
-            var hasQuarkusOutputGuardrails = !methodCreateInfo.getQuarkusOutputGuardrailsClassNames().isEmpty();
+            committableChatMemory.commit(); // for streaming cases, we really have to commit because all alternatives
+                                            // are worse
             var hasUpstreamGuardrails = methodCreateInfo.getOutputGuardrails().hasGuardrails();
             Multi<?> stream = new TokenStreamMulti(messagesToSend, toolSpecifications, toolExecutors,
-                    (augmentationResult != null ? augmentationResult.contents() : null), context, memoryId,
+                    (augmentationResult != null ? augmentationResult.contents() : null), context, invocationContext, memoryId,
                     methodCreateInfo.isSwitchToWorkerThreadForToolExecution(), isRunningOnWorkerThread);
 
-            if (hasQuarkusOutputGuardrails || hasUpstreamGuardrails) {
+            if (hasUpstreamGuardrails) {
                 stream = stream.filter(o -> o instanceof ChatEvent)
                         .map(ChatEvent.class::cast)
-                        .plug(s -> GuardrailsSupport.accumulate(s, methodCreateInfo));
-
-                if (hasQuarkusOutputGuardrails) {
-                    stream = stream.map(chunk -> {
-                        ChatEvent.AccumulatedResponseEvent accumulatedChunk = (ChatEvent.AccumulatedResponseEvent) chunk;
-                        OutputGuardrailResult result;
-                        try {
-                            result = GuardrailsSupport.invokeOutputGuardRails(methodCreateInfo,
-                                    new OutputGuardrailParams(AiMessage.from(accumulatedChunk.getMessage()), chatMemory,
-                                            actualAugmentationResult,
-                                            methodCreateInfo.getUserMessageTemplate(),
-                                            Collections.unmodifiableMap(templateVariables)),
-                                    beanManager, auditSourceInfo);
-                        } catch (Exception e) {
-                            throw new GuardrailException(e.getMessage(), e);
-                        }
-
-                        if (!result.isSuccess()) {
-                            if (!result.isRetry()) {
-                                throw new GuardrailException(result.toString(), result.getFirstFailureException());
-                            } else if (result.getReprompt() != null) {
-                                committableChatMemory.add(new UserMessage(result.getReprompt()));
-                                throw new GuardrailsSupport.GuardrailRetryException();
-                            } else {
-                                // Retry without re-prompting
-                                throw new GuardrailsSupport.GuardrailRetryException();
-                            }
-                        } else {
-                            if (result.hasRewrittenResult()) {
-                                throw new GuardrailException(
-                                        "Attempting to rewrite the LLM output while streaming is not allowed");
-                            }
-
-                            if (isStringMulti) {
-                                return accumulatedChunk.getMessage();
-                            }
-
-                            return chunk;
-                        }
-                    })
-                            // Retry logic:
-                            // 1. retry only on the custom RetryException
-                            // 2. If we still have a RetryException afterward, we fail.
-                            .onFailure(GuardrailRetryException.class)
-                            .retry()
-                            .atMost(methodCreateInfo.getQuarkusGuardrailsMaxRetry())
-                            .onFailure(GuardrailRetryException.class)
-                            .transform(t -> new GuardrailException(
-                                    "Output validation failed. The guardrails have reached the maximum number of retries"));
-                }
-
-                if (hasUpstreamGuardrails) {
-                    stream = stream.map(
-                            new OutputGuardrailStreamingMapper(
-                                    guardrailService,
-                                    methodCreateInfo,
-                                    committableChatMemory,
-                                    actualAugmentationResult,
-                                    templateVariables,
-                                    isStringMulti))
-                            .onFailure(GuardrailsSupport::isOutputGuardrailRetry)
-                            .retry()
-                            .atMost(methodCreateInfo.getOutputGuardrails().getMaxRetriesAsSetByConfig());
-                }
+                        .plug(s -> GuardrailsSupport.accumulate(s, methodCreateInfo))
+                        .map(
+                                new OutputGuardrailStreamingMapper(
+                                        guardrailService,
+                                        methodCreateInfo,
+                                        GuardrailRequestParams.builder()
+                                                .chatMemory(committableChatMemory)
+                                                .augmentationResult(augmentationResult)
+                                                .userMessageTemplate(methodCreateInfo.getUserMessageTemplate())
+                                                .variables(templateVariables)
+                                                .invocationContext(invocationContext)
+                                                .aiServiceListenerRegistrar(context.eventListenerRegistrar)
+                                                .build(),
+                                        isStringMulti))
+                        .onFailure(GuardrailsSupport::isOutputGuardrailRetry)
+                        .retry()
+                        .atMost(methodCreateInfo.getOutputGuardrails().getMaxRetriesAsSetByConfig());
             } else {
                 stream = stream.filter(event -> !isStringMulti || event instanceof ChatEvent.PartialResponseEvent)
                         .map(event -> {
@@ -435,7 +463,9 @@ public class AiServiceMethodImplementationSupport {
 
         log.debug("Attempting to obtain AI response");
 
-        ChatRequest chatRequest = createChatRequest(context, methodCreateInfo, methodArgs, messagesToSend, toolSpecifications);
+        ChatRequest chatRequest = context.chatRequestTransformer
+                .apply(createChatRequest(context, methodCreateInfo, methodArgs, messagesToSend, toolSpecifications),
+                        memoryId);
         ChatExecutor chatExecutor = ChatExecutor.builder(context.effectiveChatModel(methodCreateInfo, methodArgs))
                 .chatRequest(chatRequest)
                 .build();
@@ -444,17 +474,29 @@ public class AiServiceMethodImplementationSupport {
 
         log.debug("AI response obtained");
 
+        /**
+         * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+         */
         beanManager.getEvent().select(ResponseFromLLMReceivedEvent.class)
                 .fire(new DefaultResponseFromLLMReceivedEvent(auditSourceInfo, response));
+
+        // New firing
+        context.eventListenerRegistrar.fireEvent(
+                AiServiceResponseReceivedEvent.builder()
+                        .invocationContext(invocationContext)
+                        .response(response)
+                        .build());
 
         TokenUsage tokenUsageAccumulator = response.tokenUsage();
 
         verifyModerationIfNeeded(moderationFuture);
 
-        int maxSequentialToolExecutions = context.maxSequentialToolExecutions != null && context.maxSequentialToolExecutions > 0
-                ? context.maxSequentialToolExecutions
-                : getMaxSequentialToolExecutions();
+        int maxSequentialToolExecutions = context.maxSequentialToolExecutions != null
+                && context.maxSequentialToolExecutions > 0
+                        ? context.maxSequentialToolExecutions
+                        : getMaxSequentialToolExecutions();
         int executionsLeft = maxSequentialToolExecutions;
+        List<ChatResponse> intermediateResponses = new ArrayList<>();
         while (true) {
             if (executionsLeft-- == 0) {
                 throw runtime("Something is wrong, exceeded %s sequential tool executions",
@@ -467,16 +509,69 @@ public class AiServiceMethodImplementationSupport {
             if (!aiMessage.hasToolExecutionRequests()) {
                 break;
             }
+            intermediateResponses.add(response);
 
+            boolean immediateToolReturn = true;
+            List<ToolExecution> toolExecutions = new ArrayList<>();
+            List<ToolExecutionResultMessage> toolResults = new ArrayList<>();
             for (ToolExecutionRequest toolExecutionRequest : aiMessage.toolExecutionRequests()) {
                 log.debugv("Attempting to execute tool {0}", toolExecutionRequest);
                 ToolExecutor toolExecutor = toolExecutors.get(toolExecutionRequest.name());
 
-                ToolExecutionResultMessage toolExecutionResultMessage = toolExecutor == null
+                ToolExecutionResult toolExecutionResult = toolExecutor == null
                         ? context.toolService.applyToolHallucinationStrategy(toolExecutionRequest)
-                        : executeTool(auditSourceInfo, toolExecutionRequest, toolExecutor, memoryId, beanManager);
+                        : executeTool(auditSourceInfo, toolExecutionRequest, toolExecutor, invocationContext, beanManager);
 
-                committableChatMemory.add(toolExecutionResultMessage);
+                // New firing
+                context.eventListenerRegistrar.fireEvent(
+                        dev.langchain4j.observability.api.event.ToolExecutedEvent.builder()
+                                .invocationContext(invocationContext)
+                                .request(toolExecutionRequest)
+                                .resultText(toolExecutionResult.resultText())
+                                .build());
+
+                ToolExecutionResultMessage toolExecutionResultMessage = ToolExecutionResultMessage.from(toolExecutionRequest,
+                        toolExecutionResult.resultText());
+
+                ToolExecution toolExecution = ToolExecution.builder()
+                        .request(toolExecutionRequest)
+                        .result(toolExecutionResult)
+                        .build();
+                toolExecutions.add(toolExecution);
+                toolResults.add(toolExecutionResultMessage);
+                if (toolExecutor != null && toolExecutor instanceof QuarkusToolExecutor) {
+                    immediateToolReturn = ((QuarkusToolExecutor) toolExecutor).returnBehavior() == ReturnBehavior.IMMEDIATE;
+                } else {
+                    immediateToolReturn = false;
+                }
+
+            }
+            for (ToolExecutionResultMessage toolResult : toolResults) {
+                committableChatMemory.add(toolResult);
+            }
+            if (immediateToolReturn) {
+                if (!TypeUtil.isResult(returnType)) {
+                    throw IllegalConfigurationException
+                            .illegalConfiguration("@Tool with IMMEDIATE return behavior must return a Result");
+                }
+                ChatResponse finalResponse = intermediateResponses.remove(intermediateResponses.size() - 1);
+                var result = Result.builder()
+                        .content(null)
+                        .tokenUsage(tokenUsageAccumulator)
+                        .sources(augmentationResult == null ? null : augmentationResult.contents())
+                        .finishReason(FinishReason.TOOL_EXECUTION)
+                        .toolExecutions(toolExecutions)
+                        .intermediateResponses(intermediateResponses)
+                        .finalResponse(finalResponse)
+                        .build();
+
+                context.eventListenerRegistrar.fireEvent(
+                        AiServiceCompletedEvent.builder()
+                                .invocationContext(invocationContext)
+                                .result(result)
+                                .build());
+
+                return result;
             }
 
             log.debug("Attempting to obtain AI response");
@@ -509,30 +604,33 @@ public class AiServiceMethodImplementationSupport {
             response = effectiveChatModel.chat(chatRequestBuilder.parameters(parametersBuilder.build()).build());
             log.debug("AI response obtained");
 
+            /**
+             * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+             */
             beanManager.getEvent().select(ResponseFromLLMReceivedEvent.class)
                     .fire(new DefaultResponseFromLLMReceivedEvent(auditSourceInfo, response));
+
+            // New firing
+            context.eventListenerRegistrar.fireEvent(
+                    AiServiceResponseReceivedEvent.builder()
+                            .invocationContext(invocationContext)
+                            .response(response)
+                            .build());
 
             tokenUsageAccumulator = sum(tokenUsageAccumulator, response.tokenUsage());
         }
 
         String userMessageTemplate = methodCreateInfo.getUserMessageTemplate();
-
-        /**
-         * @deprecated Deprecated in favor of upstream implementation
-         */
-        var guardrailResponse = GuardrailsSupport.invokeOutputGuardRails(methodCreateInfo, committableChatMemory,
-                context.effectiveChatModel(methodCreateInfo, methodArgs),
-                response,
-                toolSpecifications,
-                new OutputGuardrailParams(response.aiMessage(), committableChatMemory, augmentationResult, userMessageTemplate,
-                        Collections.unmodifiableMap(templateVariables)),
-                beanManager, auditSourceInfo);
-
-        response = guardrailResponse.response();
-        Object guardrailResult = guardrailResponse
-                .getRewrittenResult();
-        guardrailResult = GuardrailsSupport.executeOutputGuardrails(guardrailService, methodCreateInfo, response, chatExecutor,
-                committableChatMemory, augmentationResult, templateVariables, guardrailResult);
+        var guardrailResult = GuardrailsSupport.executeOutputGuardrails(guardrailService, methodCreateInfo, response,
+                chatExecutor,
+                GuardrailRequestParams.builder()
+                        .chatMemory(committableChatMemory)
+                        .augmentationResult(augmentationResult)
+                        .userMessageTemplate(methodCreateInfo.getUserMessageTemplate())
+                        .variables(templateVariables)
+                        .invocationContext(invocationContext)
+                        .aiServiceListenerRegistrar(context.eventListenerRegistrar)
+                        .build());
 
         // everything worked as expected so let's commit the messages
         committableChatMemory.commit();
@@ -541,6 +639,12 @@ public class AiServiceMethodImplementationSupport {
                 userMessageTemplate, templateVariables);
 
         if ((guardrailResult != null) && TypeUtil.isTypeOf(returnType, guardrailResult.getClass())) {
+            context.eventListenerRegistrar.fireEvent(
+                    AiServiceCompletedEvent.builder()
+                            .invocationContext(invocationContext)
+                            .result(guardrailResult)
+                            .build());
+
             return ResponseAugmenterSupport.invoke(guardrailResult, methodCreateInfo, responseAugmenterParam);
         }
 
@@ -551,69 +655,73 @@ public class AiServiceMethodImplementationSupport {
         response = ChatResponse.builder().aiMessage(response.aiMessage()).metadata(response.metadata()).build();
 
         if (TypeUtil.isResult(returnType)) {
-            var parsedResponse = SERVICE_OUTPUT_PARSER.parse(ChatResponse.builder().aiMessage(response.aiMessage()).build(),
+            var parsedResponse = SERVICE_OUTPUT_PARSER.parse(
+                    ChatResponse.builder().aiMessage(response.aiMessage()).build(),
                     TypeUtil.resultTypeParam((ParameterizedType) returnType));
             parsedResponse = ResponseAugmenterSupport.invoke(parsedResponse, methodCreateInfo, responseAugmenterParam);
-            return Result.builder()
+            var result = Result.builder()
                     .content(parsedResponse)
                     .tokenUsage(tokenUsageAccumulator)
                     .sources(augmentationResult == null ? null : augmentationResult.contents())
                     .finishReason(response.finishReason())
                     .build();
+
+            context.eventListenerRegistrar.fireEvent(
+                    AiServiceCompletedEvent.builder()
+                            .invocationContext(invocationContext)
+                            .result(result)
+                            .build());
+
+            return result;
         }
 
-        return ResponseAugmenterSupport.invoke(
+        var augmentedResponse = ResponseAugmenterSupport.invoke(
                 SERVICE_OUTPUT_PARSER.parse(ChatResponse.builder().aiMessage(response.aiMessage()).build(), returnType),
                 methodCreateInfo, responseAugmenterParam);
+
+        context.eventListenerRegistrar.fireEvent(
+                AiServiceCompletedEvent.builder()
+                        .invocationContext(invocationContext)
+                        .result(augmentedResponse)
+                        .build());
+
+        return augmentedResponse;
     }
 
-    private static ToolExecutionResultMessage executeTool(AuditSourceInfo auditSourceInfo,
-            ToolExecutionRequest toolExecutionRequest, ToolExecutor toolExecutor, Object memoryId,
+    private static InvocationParameters findInvocationParams(Object[] args) {
+        if (args == null) {
+            return new InvocationParameters();
+        }
+        for (Object arg : args) {
+            if (arg != null && arg instanceof InvocationParameters) {
+                return (InvocationParameters) arg;
+            }
+        }
+        return new InvocationParameters();
+    }
+
+    private static ToolExecutionResult executeTool(AuditSourceInfo auditSourceInfo,
+            ToolExecutionRequest toolExecutionRequest, ToolExecutor toolExecutor, InvocationContext invocationContext,
             BeanManager beanManager) {
-        String toolExecutionResult = toolExecutor.execute(toolExecutionRequest, memoryId);
+        ToolExecutionResult toolExecutionResult = toolExecutor.executeWithContext(toolExecutionRequest, invocationContext);
         log.debugv("Result of {0} is '{1}'", toolExecutionRequest, toolExecutionResult);
-        ToolExecutionResultMessage toolExecutionResultMessage = ToolExecutionResultMessage.from(
-                toolExecutionRequest,
-                toolExecutionResult);
+
+        /**
+         * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+         */
         beanManager.getEvent().select(ToolExecutedEvent.class)
-                .fire(new DefaultToolExecutedEvent(auditSourceInfo, toolExecutionRequest, toolExecutionResult));
-        return toolExecutionResultMessage;
+                .fire(new DefaultToolExecutedEvent(auditSourceInfo, toolExecutionRequest, toolExecutionResult.resultText()));
+
+        return toolExecutionResult;
     }
 
-    /**
-     * @deprecated Deprecated in favor of upstream implementation
-     */
-    @Deprecated(forRemoval = true)
-    private static ChatResponse executeRequest(JsonSchema jsonSchema, List<ChatMessage> messagesToSend,
-            ChatModel chatModel, List<ToolSpecification> toolSpecifications) {
-        var chatRequest = ChatRequest.builder()
-                .messages(messagesToSend)
-                .parameters(constructStructuredResponseParams(toolSpecifications, jsonSchema).build())
-                .build();
-
-        return chatModel.chat(chatRequest);
-    }
-
-    private static ChatRequest createChatRequest(JsonSchema jsonSchema, List<ChatMessage> messagesToSend, ChatModel chatModel,
+    private static ChatRequest createChatRequest(JsonSchema jsonSchema, List<ChatMessage> messagesToSend,
+            ChatModel chatModel,
             List<ToolSpecification> toolSpecifications) {
         return ChatRequest.builder()
                 .messages(messagesToSend)
                 .parameters(constructStructuredResponseParams(toolSpecifications, jsonSchema).build())
                 .build();
-    }
-
-    /**
-     * @deprecated Deprecated in favor of upstream implementation
-     */
-    @Deprecated(forRemoval = true)
-    private static ChatResponse executeRequest(List<ChatMessage> messagesToSend, ChatModel chatModel,
-            List<ToolSpecification> toolSpecifications) {
-        var chatRequest = ChatRequest.builder()
-                .messages(messagesToSend);
-        if (toolSpecifications != null) {
-            chatRequest.toolSpecifications(toolSpecifications);
-        }
-        return chatModel.chat(chatRequest.build());
     }
 
     static ChatRequest createChatRequest(List<ChatMessage> messagesToSend, ChatModel chatModel,
@@ -627,25 +735,14 @@ public class AiServiceMethodImplementationSupport {
         return chatRequest.build();
     }
 
-    /**
-     * @deprecated Deprecated in favor of upstream implementation
-     */
-    @Deprecated(forRemoval = true)
-    static ChatResponse executeRequest(AiServiceMethodCreateInfo methodCreateInfo, List<ChatMessage> messagesToSend,
-            ChatModel chatModel, List<ToolSpecification> toolSpecifications) {
-        var jsonSchema = supportsJsonSchema(chatModel) ? methodCreateInfo.getResponseSchemaInfo().structuredOutputSchema()
-                : Optional.<JsonSchema> empty();
-
-        return jsonSchema.isPresent() ? executeRequest(jsonSchema.get(), messagesToSend, chatModel, toolSpecifications)
-                : executeRequest(messagesToSend, chatModel, toolSpecifications);
-    }
-
     static ChatRequest createChatRequest(AiServiceMethodCreateInfo methodCreateInfo, List<ChatMessage> messagesToSend,
             ChatModel chatModel, List<ToolSpecification> toolSpecifications) {
-        var jsonSchema = supportsJsonSchema(chatModel) ? methodCreateInfo.getResponseSchemaInfo().structuredOutputSchema()
+        var jsonSchema = supportsJsonSchema(chatModel)
+                ? methodCreateInfo.getResponseSchemaInfo().structuredOutputSchema()
                 : Optional.<JsonSchema> empty();
 
-        return jsonSchema.isPresent() ? createChatRequest(jsonSchema.get(), messagesToSend, chatModel, toolSpecifications)
+        return jsonSchema.isPresent()
+                ? createChatRequest(jsonSchema.get(), messagesToSend, chatModel, toolSpecifications)
                 : createChatRequest(messagesToSend, chatModel, toolSpecifications);
     }
 
@@ -653,39 +750,68 @@ public class AiServiceMethodImplementationSupport {
             AiServiceMethodCreateInfo methodCreateInfo, Object[] methodArgs,
             List<ChatMessage> messagesToSend, List<ToolSpecification> toolSpecifications) {
 
-        return createChatRequest(methodCreateInfo, messagesToSend, context.effectiveChatModel(methodCreateInfo, methodArgs),
+        return createChatRequest(methodCreateInfo, messagesToSend,
+                context.effectiveChatModel(methodCreateInfo, methodArgs),
                 toolSpecifications);
     }
 
     private static Object doImplementGenerateImage(AiServiceMethodCreateInfo methodCreateInfo,
-            QuarkusAiServiceContext context,
+            QuarkusAiServiceContext context, InvocationContext invocationContext,
             Optional<SystemMessage> systemMessage, UserMessage userMessage,
             Object memoryId, Type returnType, Map<String, Object> templateVariables, AuditSourceInfo auditSourceInfo) {
-        String imagePrompt;
-        if (systemMessage.isPresent()) {
-            imagePrompt = systemMessage.get().text() + "\n" + userMessage.singleText();
-        } else {
-            imagePrompt = userMessage.singleText();
-        }
 
         var beanManager = Arc.container().beanManager();
 
+        /**
+         * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+         */
         beanManager.getEvent().select(InitialMessagesCreatedEvent.class)
                 .fire(new DefaultInitialMessagesCreatedEvent(auditSourceInfo, systemMessage, userMessage));
 
-        // TODO: does it make sense to use the retrievalAugmentor here? What good would be for us telling the LLM to use this or that information to create an
+        // New firing
+        context.eventListenerRegistrar.fireEvent(
+                AiServiceStartedEvent.builder()
+                        .invocationContext(invocationContext)
+                        .systemMessage(systemMessage)
+                        .userMessage(userMessage)
+                        .build());
+
+        // TODO: does it make sense to use the retrievalAugmentor here? What good would
+        // be for us telling the LLM to use this or that information to create an
         // image?
         AugmentationResult augmentationResult = null;
 
         // TODO: we can only support input guardrails for now as it is tied to AiMessage
-        GuardrailsSupport.invokeInputGuardRails(methodCreateInfo, userMessage,
-                context.hasChatMemory() ? context.chatMemoryService.getChatMemory(memoryId) : null,
-                augmentationResult, templateVariables, beanManager, auditSourceInfo);
+        var chatMemory = context.hasChatMemory() ? context.chatMemoryService.getChatMemory(memoryId) : null;
+        var guardrailParams = GuardrailRequestParams.builder()
+                .chatMemory(chatMemory)
+                .augmentationResult(augmentationResult)
+                .userMessageTemplate(methodCreateInfo.getUserMessageTemplate())
+                .variables(templateVariables)
+                .invocationContext(invocationContext)
+                .aiServiceListenerRegistrar(context.eventListenerRegistrar)
+                .build();
+        var um = GuardrailsSupport.executeInputGuardrails(context.guardrailService(), userMessage, methodCreateInfo,
+                guardrailParams);
+
+        var imagePrompt = systemMessage
+                .map(sm -> "%s\n%s".formatted(sm.text(), um.singleText()))
+                .orElseGet(um::singleText);
 
         Response<Image> imageResponse = context.imageModel.generate(imagePrompt);
 
+        /**
+         * @deprecated In favor of https://docs.langchain4j.dev/tutorials/observability#ai-service-observability
+         */
         beanManager.getEvent().select(LLMInteractionCompleteEvent.class)
                 .fire(new DefaultLLMInteractionCompleteEvent(auditSourceInfo, imageResponse.content()));
+
+        // New firing
+        context.eventListenerRegistrar.fireEvent(
+                AiServiceCompletedEvent.builder()
+                        .invocationContext(invocationContext)
+                        .result(imageResponse.content())
+                        .build());
 
         if (TypeUtil.isImage(returnType)) {
             return imageResponse.content();
@@ -727,7 +853,8 @@ public class AiServiceMethodImplementationSupport {
         }
 
         if (needsMemorySeed) {
-            // the seed messages always need to come after the system message and before the user message
+            // the seed messages always need to come after the system message and before the
+            // user message
             List<ChatMessage> seedChatMessages = context.chatMemorySeeder
                     .seed(new ChatMemorySeeder.Context(methodCreateInfo.getMethodName()));
             for (ChatMessage seedChatMessage : seedChatMessages) {
@@ -781,7 +908,8 @@ public class AiServiceMethodImplementationSupport {
         if (createInfo.isRequiresModeration()) {
             log.debug("Moderation is required and it will be executed in the background");
 
-            // TODO: don't occupy a worker thread for this and instead use the reactive API provided by the client
+            // TODO: don't occupy a worker thread for this and instead use the reactive API
+            // provided by the client
 
             ExecutorService defaultExecutor = (ExecutorService) Infrastructure.getDefaultExecutor();
             moderationFuture = defaultExecutor.submit(new Callable<>() {
@@ -813,14 +941,20 @@ public class AiServiceMethodImplementationSupport {
         Map<String, Object> templateParams = new HashMap<>();
         Map<String, Integer> nameToParamPosition = systemMessageInfo.nameToParamPosition();
         for (var entry : nameToParamPosition.entrySet()) {
-            templateParams.put(entry.getKey(), methodArgs[entry.getValue()]);
+            if (entry.getKey() != null) {
+                templateParams.put(entry.getKey(), methodArgs[entry.getValue()]);
+            }
         }
 
         templateParams.put(ResponseSchemaUtil.templateParam(),
                 createInfo.getResponseSchemaInfo().outputFormatInstructions());
         templateParams.put("chat_memory", previousChatMessages);
-        Prompt prompt = PromptTemplate.from(systemMessageInfo.text().get()).apply(templateParams);
-        return Optional.of(prompt.toSystemMessage());
+        Optional<String> maybeText = systemMessageInfo.text();
+        if (maybeText.isPresent()) {
+            return Optional.of(PromptTemplate.from(maybeText.get()).apply(templateParams).toSystemMessage());
+        } else {
+            return Optional.empty();
+        }
     }
 
     private static UserMessage prepareUserMessage(AiServiceContext context, AiServiceMethodCreateInfo createInfo,
@@ -833,7 +967,8 @@ public class AiServiceMethodImplementationSupport {
         PdfFileContent pdfFileContent = null;
         if (userMessageInfo.userNameParamPosition().isPresent()) {
             userName = methodArgs[userMessageInfo.userNameParamPosition().get()]
-                    .toString(); // LangChain4j does this, but might want to make anything other than a String a build time error
+                    .toString(); // LangChain4j does this, but might want to make anything other than a String a
+                                                                                                     // build time error
         }
         if (userMessageInfo.imageParamPosition().isPresent()) {
             Object imageParamValue = methodArgs[userMessageInfo.imageParamPosition().get()];
@@ -916,7 +1051,8 @@ public class AiServiceMethodImplementationSupport {
             }
 
             if (createInfo.getResponseSchemaInfo().enabled()) {
-                // No response schema placeholder found in the @SystemMessage and @UserMessage, concat it to the UserMessage.
+                // No response schema placeholder found in the @SystemMessage and @UserMessage,
+                // concat it to the UserMessage.
                 if (!createInfo.getResponseSchemaInfo().isInSystemMessage() && !hasResponseSchema
                         && !supportsJsonSchema) {
                     templateText = templateText.concat(ResponseSchemaUtil.placeholder());
@@ -960,7 +1096,9 @@ public class AiServiceMethodImplementationSupport {
 
             for (var entry : nameToParamPosition.entrySet()) {
                 Object value = transformTemplateParamValue(methodArgs[entry.getValue()]);
-                variables.put(entry.getKey(), value);
+                if (entry.getKey() != null) {
+                    variables.put(entry.getKey(), value);
+                }
             }
         }
 
@@ -993,7 +1131,8 @@ public class AiServiceMethodImplementationSupport {
             return "";
         }
         if (value.getClass().isArray()) {
-            // Qute does not transform these values but LangChain4j expects to be converted to a [item1, item2, item3] like syntax
+            // Qute does not transform these values but LangChain4j expects to be converted
+            // to a [item1, item2, item3] like syntax
             return Arrays.toString((Object[]) value);
         }
         return value;

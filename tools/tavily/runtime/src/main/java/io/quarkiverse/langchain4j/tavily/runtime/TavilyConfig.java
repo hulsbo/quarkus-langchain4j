@@ -52,7 +52,7 @@ public interface TavilyConfig {
      * Whether responses from Tavily should be logged
      */
     @ConfigDocDefault("false")
-    @WithDefault("${quarkus.langchain4j.log-requests}")
+    @WithDefault("${quarkus.langchain4j.log-responses}")
     Optional<Boolean> logResponses();
 
     /**
@@ -75,15 +75,15 @@ public interface TavilyConfig {
     boolean includeRawContent();
 
     /**
-     * A list of domains to specifically include in the search results. Default is [], which includes all domains.
+     * A list of domains to specifically include in the search results. By default all domains are included.
      */
-    @WithDefault("[]")
-    List<String> includeDomains();
+    @ConfigDocDefault("empty list")
+    Optional<List<String>> includeDomains();
 
     /**
-     * A list of domains to specifically exclude from the search results. Default is [], which doesn't exclude any domains.
+     * A list of domains to specifically exclude from the search results. By default no domains are excluded.
      */
-    @WithDefault("[]")
-    List<String> excludeDomains();
+    @ConfigDocDefault("empty list")
+    Optional<List<String>> excludeDomains();
 
 }
